@@ -1,0 +1,39 @@
+{
+  "name": "@xenon.js/eslint-config",
+  "version": "1.0.5",
+  "description": "ESLint config used by the Xenon Studio.",
+  "keywords": [
+    "xenon",
+    "eslintconfig"
+  ],
+  "homepage": "https://smallmain.com/",
+  "bugs": {
+    "url": "https://github.com/xenon-dev-studio/misc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "SmallMain",
+    "email": "smallmain@outlook.com",
+    "url": "https://www.smallmain.com/"
+  },
+  "funding": "https://smallmain.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xenon-dev-studio/misc/tree/master/packages/js/eslint-config"
+  },
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.1.0",
+    "@eslint/js": "^8.52.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0"
+  },
+  "peerDependencies": {
+    "eslint": "^8.52.0",
+    "typescript": ">=2.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

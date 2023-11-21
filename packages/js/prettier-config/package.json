@@ -1,0 +1,34 @@
+{
+  "name": "@xenon.js/prettier-config",
+  "version": "1.0.2",
+  "description": "Some Prettier config commonly used by the Xenon team.",
+  "keywords": [
+    "xenon",
+    "prettierconfig"
+  ],
+  "homepage": "https://smallmain.com/",
+  "bugs": {
+    "url": "https://github.com/xenon-dev-studio/misc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "SmallMain",
+    "email": "smallmain@outlook.com",
+    "url": "https://www.smallmain.com/"
+  },
+  "funding": "https://smallmain.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xenon-dev-studio/misc/tree/master/packages/js/prettier-config"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@types/node": "^18.15.3"
+  },
+  "peerDependencies": {
+    "prettier": "^3.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

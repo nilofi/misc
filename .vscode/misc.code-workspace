@@ -1,0 +1,50 @@
+{
+	"folders": [
+		{
+			"name": "root",
+			"path": ".."
+		},
+		{
+			"name": "eslint-config",
+			"path": "../packages/js/eslint-config"
+		},
+		{
+			"name": "prettier-config",
+			"path": "../packages/js/prettier-config"
+		},
+	],
+	"settings": {
+		"[javascript][typescript][javascriptreact][typescriptreact]": {
+			"editor.formatOnSave": true,
+			"editor.codeActionsOnSave": {
+				"source.fixAll": true,
+				"source.organizeImports": true,
+			},
+			"editor.defaultFormatter": "esbenp.prettier-vscode",
+			"editor.formatOnPaste": true,
+			"editor.formatOnType": true,
+		},
+		"[css][scss][less]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode",
+		},
+		"[html]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode",
+		},
+		"[markdown][mdx]": {
+			"editor.formatOnSave": true,
+			"editor.codeActionsOnSave": {
+				"source.fixAll": true,
+				"source.organizeImports": true,
+			},
+			"editor.defaultFormatter": "esbenp.prettier-vscode",
+			"editor.formatOnPaste": true,
+			"editor.formatOnType": true,
+		},
+	},
+	"extensions": {
+		"recommendations": [
+			"esbenp.prettier-vscode",
+			"editorconfig.editorconfig"
+		]
+	}
+}

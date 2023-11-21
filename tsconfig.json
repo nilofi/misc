@@ -1,0 +1,79 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        // 只给编译器提供警告，不产生编译错误
+        // "allowUnreachableCode",
+        // 只给编译器提供警告，不产生编译错误
+        // "allowUnusedLabels",
+        // provided by strict
+        // "alwaysStrict",
+        // switch 必须有 break
+        "noFallthroughCasesInSwitch": true,
+        // provided by strict
+        // "noImplicitAny",
+        // 重写父类方法时必须加上 override
+        "noImplicitOverride": true,
+        // 检查所有代码路径必须返回值
+        "noImplicitReturns": true,
+        // provided by strict
+        // "noImplicitThis",
+        // 没必要开启该项
+        "noPropertyAccessFromIndexSignature": false,
+        // 没必要开启该项
+        "noUncheckedIndexedAccess": false,
+        // 没必要开启该项
+        "noUnusedLocals": false,
+        // 没必要开启该项
+        "noUnusedParameters": false,
+        // 开启严格模式
+        "strict": true,
+        // provided by strict
+        // "strictBindCallApply",
+        // provided by strict
+        // "strictFunctionTypes",
+        // provided by strict
+        // "strictNullChecks",
+        // provided by strict
+        // "strictPropertyInitialization",
+        // provided by strict
+        // "useUnknownInCatchVariables",
+        // 没必要开启该项
+        "allowUmdGlobalAccess": false,
+        // 编译时输出类型文件
+        "declaration": true,
+        // 允许迭代器
+        "downlevelIteration": true,
+        // 规范 import type
+        "verbatimModuleSyntax": true,
+        // 不删除注释，因为会连同 d.ts 文件中的注释一块删除
+        "removeComments": false,
+        // 大部分项目需要这个
+        "sourceMap": true,
+        // 虽然使用 JSDoc 的 @internal 标记内部接口，但依然希望出现在 d.ts 中
+        "stripInternal": false,
+        // 允许导入 JS 文件
+        "allowJs": true,
+        // 默认不检查 JS 文件，使用 // @ts-check 手动开启
+        "checkJs": false,
+        // 无内存限制
+        "disableSizeLimit": true,
+        // 允许通过 default import 使用 CommonJS 模块
+        "allowSyntheticDefaultImports": true,
+        // 文件名区分大小写
+        "forceConsistentCasingInFileNames": true,
+        // 每个文件是单独的模块
+        "isolatedModules": true,
+        // 开启实验性装饰器特性
+        "experimentalDecorators": true,
+        // 符合语言标准
+        "useDefineForClassFields": true,
+        // 不要截断错误信息
+        "noErrorTruncation": true,
+        // 不校验 .d.ts 的类型是否合法
+        "skipLibCheck": true,
+        // 生成 .d.ts.map 文件
+        "declarationMap": true,
+    },
+}
