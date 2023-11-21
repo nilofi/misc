@@ -6,9 +6,16 @@
 
 Read this in other languages: English | [简体中文](./README_zh-CN.md)
 
-## Introduction
+## Introduction 
 
-TODO
+This repository currently maintains the following packages: 
+
+- [@xenon.js/eslint-config](./packages/js/eslint-config/README.md) 
+- [@xenon.js/prettier-config](./packages/js/prettier-config/README.md)
+
+## Contributing
+
+To get started contributing to the project, see the [Contributing Guide](./CONTRIBUTING.md).
 
 ## License
 

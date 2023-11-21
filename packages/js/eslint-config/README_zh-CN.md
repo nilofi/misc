@@ -16,6 +16,10 @@
 
 如果你理解，那么你就直接使用。
 
+## 贡献
+
+如果你想为项目出一份力，请参阅[贡献指南](./CONTRIBUTING_zh-CN.md)。
+
 ## 许可证
 
 [MIT @ SmallMain](../LICENSE)

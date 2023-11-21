@@ -16,6 +16,10 @@ Read this in other languages: English | [简体中文](./README_zh-CN.md)
 
 If you understand, then you use it.
 
+## Contributing
+
+To get started contributing to the project, see the [Contributing Guide](./CONTRIBUTING.md).
+
 ## License
 
 [MIT @ SmallMain](../LICENSE)

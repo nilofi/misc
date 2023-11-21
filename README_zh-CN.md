@@ -6,9 +6,16 @@
 
 阅读其它语言版本: [English](./README.md) | 简体中文
 
-## 起步
+## 简介
 
-TODO
+本仓库当前维护着以下包：
+
+- [@xenon.js/eslint-config](./packages/js/eslint-config/README_zh-CN.md)
+- [@xenon.js/prettier-config](./packages/js/prettier-config/README_zh-CN.md)
+
+## 贡献
+
+如果你想为项目出一份力，请参阅[贡献指南](./CONTRIBUTING_zh-CN.md)。
 
 ## 许可证
 
