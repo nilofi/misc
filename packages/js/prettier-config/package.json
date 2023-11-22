@@ -1,7 +1,7 @@
 {
   "name": "@xenon.js/prettier-config",
-  "version": "1.0.2",
-  "description": "Some Prettier config commonly used by the Xenon team.",
+  "version": "1.0.3",
+  "description": "Prettier config used by the Xenon Studio.",
   "keywords": [
     "xenon",
     "prettierconfig"

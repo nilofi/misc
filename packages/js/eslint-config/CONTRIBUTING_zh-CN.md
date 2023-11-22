@@ -2,6 +2,6 @@
 
 当准备发布包的新版本时，请按照以下步骤进行：
 
-1. 修改 `package.json` 中的 `version` 为将要发布的版本号。
+1. 运行 `pnpm version xxx` 命令更改版本号。
 2. 将所有修改提交并推送。
 3. 运行 `pnpm publish` 命令。
