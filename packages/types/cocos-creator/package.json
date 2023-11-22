@@ -1,0 +1,34 @@
+{
+  "name": "@xenon.types/cocos-creator",
+  "version": "3.8.0",
+  "description": "TypeScript declaration files extracted from Cocos Creator engine.",
+  "keywords": [
+    "xenon",
+    "cocos",
+    "cocos creator",
+    "types"
+  ],
+  "homepage": "https://smallmain.com/",
+  "bugs": {
+    "url": "https://github.com/xenon-dev-studio/misc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "SmallMain",
+    "email": "smallmain@outlook.com",
+    "url": "https://www.smallmain.com/"
+  },
+  "funding": "https://smallmain.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xenon-dev-studio/misc/tree/master/packages/types/cocos-creator"
+  },
+  "main": "",
+  "types": "index.d.ts",
+  "dependencies": {
+    "@types/node": "^18.15.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

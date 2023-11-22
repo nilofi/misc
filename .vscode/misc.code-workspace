@@ -12,6 +12,10 @@
 			"name": "prettier-config",
 			"path": "../packages/js/prettier-config"
 		},
+		{
+			"name": "@types/cocos-creator",
+			"path": "../packages/types/cocos-creator"
+		},
 	],
 	"settings": {
 		"[javascript][typescript][javascriptreact][typescriptreact]": {
