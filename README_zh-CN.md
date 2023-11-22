@@ -12,6 +12,7 @@
 
 - [@xenon.js/eslint-config](./packages/js/eslint-config/README_zh-CN.md)
 - [@xenon.js/prettier-config](./packages/js/prettier-config/README_zh-CN.md)
+- [@xenon.types/cocos-creator](./packages/types/cocos-creator/README_zh-CN.md)
 
 ## 贡献
 
