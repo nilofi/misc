@@ -14,7 +14,9 @@ Read this in other languages: English | [简体中文](./README_zh-CN.md)
 
 ## Introduction
 
-Including runtime and editor type declarations.
+Cocos Creator runtime and editor type declarations.
+
+**Cocos provides [official type definition package](https://github.com/cocos/creator-types) after v3.8.1. It is recommended to use it first. Unless there are special circumstances, this package will no longer be updated.**
 
 ## Usage
 
@@ -32,12 +34,11 @@ For example, if you want to install the type package corresponding to Cocos Crea
 npm install @xenon.types/cocos-creator@3.8.0
 ```
 
-2. Add the path of `@xenon.types` to the `typeRoots` field of `compilerOptions` in `tsconfig.json` so that TypeScript can find the type declaration file:
+2. Add the path of `@xenon.types/cocos-creator` to the `types` field of `compilerOptions` in `tsconfig.json` so that TypeScript can find the type declaration file:
 
 ```json5
-"typeRoots": [
-    "./node_modules/@types",
-    "./node_modules/@xenon.types",
+"types": [
+    "@xenon.types/cocos-creator",
 ],
 ```
 

@@ -14,7 +14,7 @@ Read this in other languages: English | [简体中文](./README_zh-CN.md)
 
 ## Introduction
 
-If you understand, then you use it.
+If you understand what this is, then you're free to use it.
 
 ## Contributing
 

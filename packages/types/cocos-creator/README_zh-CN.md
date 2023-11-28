@@ -14,7 +14,9 @@
 
 ## 简介
 
-运行 `npm install @xenon.types/cocos-dts`，并修改 `tsconfig.json` 的 `typeRoots` 字段，然后就能像已经安装了引擎一样获得编码提示。
+Cocos Creator 的运行时和编辑器类型声明。
+
+**Cocos 在 v3.8.1 之后提供了[官方类型定义包](https://github.com/cocos/creator-types)，推荐优先使用它，除非特殊情况，本包将不再更新。**
 
 ## 使用
 
@@ -30,12 +32,11 @@ npm install @xenon.types/cocos-creator
 npm install @xenon.types/cocos-creator@3.8.0
 ```
 
-2. 在 `tsconfig.json` 中向 `compilerOptions` 的 `typeRoots` 字段添加 `@xenon.types` 的路径，以让 TypeScript 能够找到类型声明文件：
+2. 在 `tsconfig.json` 中向 `compilerOptions` 的 `types` 字段添加 `@xenon.types/cocos-creator`，以让 TypeScript 能够找到类型声明文件：
 
 ```json5
-"typeRoots": [
-    "./node_modules/@types",
-    "./node_modules/@xenon.types",
+"types": [
+    "@xenon.types/cocos-creator",
 ],
 ```
 
