@@ -1,5 +1,5 @@
 {
-    "extends": "../../../tsconfig.base.json",
+    "extends": "@xenon.js/ts-config/base.json",
     "compilerOptions": {
         "rootDir": "./src",
         "outDir": "./dist",

@@ -13,6 +13,10 @@
 			"path": "../packages/js/rollup-plugin-misc"
 		},
 		{
+			"name": "ts-config",
+			"path": "../packages/js/ts-config"
+		},
+		{
 			"name": "eslint-config",
 			"path": "../packages/js/eslint-config"
 		},
