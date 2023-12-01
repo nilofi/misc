@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/eslint-config",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "ESLint config used by the Xenon Studio.",
   "keywords": [
     "xenon",

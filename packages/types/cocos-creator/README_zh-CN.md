@@ -1,7 +1,7 @@
 <!-- 标志 -->
 <p align="center">
   <a target="_blank" rel="noopener noreferrer">
-    <img width="280" src="https://user-images.githubusercontent.com/1503156/112012067-d5cdf580-8b63-11eb-819a-1c32cf253b25.png" alt="logo">
+    <img width="350" src="https://user-images.githubusercontent.com/1503156/112012067-d5cdf580-8b63-11eb-819a-1c32cf253b25.png" alt="logo">
   </a>
 </p>
 <!-- 名字 -->

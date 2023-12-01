@@ -5,6 +5,14 @@
 			"path": ".."
 		},
 		{
+			"name": "@xenon.js/studio-misc",
+			"path": "../packages/js/studio-misc"
+		},
+		{
+			"name": "rollup-plugin-misc",
+			"path": "../packages/js/rollup-plugin-misc"
+		},
+		{
 			"name": "eslint-config",
 			"path": "../packages/js/eslint-config"
 		},

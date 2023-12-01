@@ -1,5 +1,8 @@
-# Release Process
-When you are ready to release a new version of a package, follow these steps:
-1. Run the `pnpm version xxx` command to bump version.
-2. Commit and push all changes.
-3. Run the `pnpm publish` command.
+# Introduction
+
+Before reading this guide, please read the [Contributing Guide](../../../CONTRIBUTING.md).
+
+# Release Flow
+
+Check out the [Release Flow A](../../../CONTRIBUTING.md#release-flow-a) in the root directory of the repository.
+ 
