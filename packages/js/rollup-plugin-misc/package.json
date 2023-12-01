@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/rollup-plugin-misc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Rollup plugin with several miscellaneous features used by Xenon Studio.",
   "keywords": [
     "xenon",
@@ -24,7 +24,8 @@
   "main": "index.js",
   "type": "module",
   "files": [
-    "src/**/*"
+    "src/**/*",
+    "README_zh-CN.md"
   ],
   "dependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
