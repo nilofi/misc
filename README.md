@@ -12,7 +12,10 @@ This repository has a number of packages and tools in use, all of which have bee
 
 This repository currently maintains the following packages: 
 
-- [@xenon.js/eslint-config](./packages/js/eslint-config) 
+- [@xenon.js/studio-misc](./packages/js/studio-misc)
+- [@xenon.js/rollup-plugin-misc](./packages/js/rollup-plugin-misc)
+- [@xenon.js/ts-config](./packages/js/ts-config)
+- [@xenon.js/eslint-config](./packages/js/eslint-config)
 - [@xenon.js/prettier-config](./packages/js/prettier-config)
 - [@xenon.types/cocos-creator](./packages/types/cocos-creator)
 
