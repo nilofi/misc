@@ -342,7 +342,7 @@ export function tsConfigFromExports(opts) {
                 configs.push(config);
             }
 
-            if (hasTypes && !typesGenerated) {
+            if (hasTypes && !typesGenerated && forceGenTypes !== false) {
                 throw new Error("can't find the source file for types");
             }
 
