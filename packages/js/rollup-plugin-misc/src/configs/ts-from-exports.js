@@ -209,7 +209,7 @@ function bundleTypesConfig(input, dist, target, external) {
         plugins: [
             // @ts-ignore
             nodeResolve({
-                exportConditions: [target],
+                exportConditions: [target, "types"],
             }),
             dts({
                 respectExternal: true,
