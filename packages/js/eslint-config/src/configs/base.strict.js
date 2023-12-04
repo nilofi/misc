@@ -1,3 +1,4 @@
+// @ts-nocheck
 import common from "./acommon.js";
 import baseLoose from "./base.loose.js";
 

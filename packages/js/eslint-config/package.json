@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/eslint-config",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "ESLint config used by the Xenon Studio.",
   "keywords": [
     "xenon",
@@ -27,7 +27,8 @@
     "@eslint-community/eslint-plugin-eslint-comments": "^4.1.0",
     "@eslint/js": "^8.52.0",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "@typescript-eslint/parser": "^6.9.0"
+    "@typescript-eslint/parser": "^6.9.0",
+    "@xenon.js/studio-misc": "workspace:^"
   },
   "peerDependencies": {
     "eslint": "^8.52.0",
@@ -35,5 +36,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@types/node": "^20"
   }
 }

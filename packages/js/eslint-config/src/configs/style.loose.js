@@ -1,3 +1,4 @@
+// @ts-nocheck
 import typescript from "@typescript-eslint/eslint-plugin";
 import common from "./acommon.js";
 

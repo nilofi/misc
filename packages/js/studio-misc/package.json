@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/studio-misc",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Some miscellaneous code used by the Xenon Studio.",
   "keywords": [
     "xenon"
@@ -38,5 +38,13 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "find-up": "^7.0.0",
+    "glob": "^10.3.10",
+    "yaml": "^2.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20"
   }
 }

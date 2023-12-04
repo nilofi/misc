@@ -22,7 +22,7 @@ export function getExternalRegexp(name) {
  *
  * @param {Record<string,unknown>} packageJson
  * @param {(string | RegExp)[]} [base]
- * @returns {import("rollup").RollupOptions["external"])}
+ * @returns {import("rollup").RollupOptions["external"]}
  */
 export function getExternal(packageJson, base = []) {
     /**

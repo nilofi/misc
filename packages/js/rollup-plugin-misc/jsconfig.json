@@ -1,0 +1,6 @@
+{
+    "extends": "@xenon.js/ts-config/js.json",
+    "include": [
+        "src/**/*"
+    ]
+}

@@ -12,7 +12,7 @@ import { dirname, parse, resolve } from "path";
  * @returns {import("rollup").Plugin}
  */
 export function redirect(opts) {
-    if (opts.suffix === "") return;
+    if (opts.suffix === "") return undefined;
 
     return {
         name: "redirect",

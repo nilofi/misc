@@ -1,3 +1,4 @@
+// @ts-nocheck
 import eslintComments from "@eslint-community/eslint-plugin-eslint-comments";
 import js from "@eslint/js";
 import typescript from "@typescript-eslint/eslint-plugin";

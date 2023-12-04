@@ -2,7 +2,7 @@ import nodeResolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
-import { packageJsonStudioUtils } from "@xenon.js/studio-misc";
+import { packageJsonUtils } from "@xenon.js/studio-misc";
 import { mkdirSync, readFileSync } from "fs";
 import { basename, dirname, extname, format, join, parse, relative } from "path";
 import { cwd } from "process";
@@ -34,7 +34,7 @@ import { renameBundleStatsReport } from "../plugins/rename-bundle-stats-report/i
  */
 
 /**
- * @typedef {import("@xenon.js/studio-misc").packageJsonStudioUtils.PackageJsonExportsInput} PackageJsonExportsInput
+ * @typedef {import("@xenon.js/studio-misc").PackageJsonExportsInput} PackageJsonExportsInput
  */
 
 /**
@@ -43,10 +43,15 @@ import { renameBundleStatsReport } from "../plugins/rename-bundle-stats-report/i
  * @param {Options} opts
  */
 function getCommonThings(opts) {
+    const {
+        // prettier-keep
+        autoExternal = true,
+    } = opts;
+
     /**
-     * @type {{private?:boolean,exports:PackageJsonExportsInput,dependencies?:Record<string,string>}}
+     * @type {{name:string,private?:boolean,exports:PackageJsonExportsInput,dependencies?:Record<string,string>}}
      */
-    const packageJson = JSON.parse(readFileSync(join(cwd(), "./package.json")));
+    const packageJson = JSON.parse(readFileSync(join(cwd(), "./package.json"), { encoding: "utf-8" }));
 
     /**
      * @type {Set<string>}
@@ -80,12 +85,12 @@ function getCommonThings(opts) {
         /**
          * 标准化的 `exports` 对象
          */
-        exports: packageJsonStudioUtils.normalize(packageJson.exports),
+        exports: packageJsonUtils.normalize(packageJson.exports),
 
         /**
          * 经过处理的 `external` 列表
          */
-        external: opts.autoExternal ? getExternal(packageJson, opts.external) : opts.external ?? [],
+        external: autoExternal ? getExternal(packageJson, opts.external) : opts.external ?? [],
     };
 }
 
@@ -165,9 +170,13 @@ function baseConfig(input, dist, target) {
         },
         applyPlugins() {
             const plugins = this.plugins;
+            // @ts-ignore
             this.config.plugins.push(replace(plugins.replace));
+            // @ts-ignore
             this.config.plugins.push(typescript(plugins.typescript));
+            // @ts-ignore
             this.config.plugins.push(
+                // @ts-ignore
                 nodeResolve({
                     exportConditions: [target],
                 }),
@@ -195,6 +204,7 @@ function bundleTypesConfig(input, dist, target, external) {
         external,
         preserveSymlinks: true,
         plugins: [
+            // @ts-ignore
             nodeResolve({
                 exportConditions: [target],
             }),
@@ -410,7 +420,9 @@ export function tsSizeReportConfigFromExports(opts) {
                 const baselineDir = join(reportDir, "baselines");
                 const baselineFile = join(baselineDir, `${name}.${distName}.baseline.json`);
 
+                // @ts-ignore
                 config.plugins.push(
+                    // @ts-ignore
                     terser({
                         ecma: 2020,
                     }),
@@ -423,6 +435,7 @@ export function tsSizeReportConfigFromExports(opts) {
                 );
 
                 if (opts.isBaseline) {
+                    // @ts-ignore
                     config.plugins.push(
                         bundleStats({
                             compare: false,
@@ -435,6 +448,7 @@ export function tsSizeReportConfigFromExports(opts) {
                     );
                 }
 
+                // @ts-ignore
                 config.plugins.push(
                     renameBundleStatsReport({
                         source: join(reportDir, "bundle-stats.html"),
