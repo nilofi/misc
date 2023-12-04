@@ -43,15 +43,18 @@ import { renameBundleStatsReport } from "../plugins/rename-bundle-stats-report/i
  * @param {Options} opts
  */
 function getCommonThings(opts) {
-    const {
-        // prettier-keep
-        autoExternal = true,
-    } = opts;
-
     /**
-     * @type {{name:string,private?:boolean,exports:PackageJsonExportsInput,dependencies?:Record<string,string>}}
+     * @type {{name:string,private?:boolean,exports:PackageJsonExportsInput,dependencies?:Record<string,string>,xenon?:any}}
      */
     const packageJson = JSON.parse(readFileSync(join(cwd(), "./package.json"), { encoding: "utf-8" }));
+
+    let { autoExternal = opts.autoExternal ?? true, external = [] } = packageJson.xenon?.build ?? {};
+
+    external = external.map(name => getExternalRegexp(name));
+
+    if (opts.external) {
+        external.push(...opts.external);
+    }
 
     /**
      * @type {Set<string>}
@@ -90,7 +93,7 @@ function getCommonThings(opts) {
         /**
          * 经过处理的 `external` 列表
          */
-        external: autoExternal ? getExternal(packageJson, opts.external) : opts.external ?? [],
+        external: autoExternal ? getExternal(packageJson, external) : external ?? [],
     };
 }
 
@@ -282,6 +285,8 @@ export function tsConfigFromExports(opts) {
         external,
     } = getCommonThings(opts);
 
+    const forceGenTypes = packageJson.xenon?.build?.forceGenTypes ?? opts.forceGenTypes;
+
     /**
      * @type {import("rollup").RollupOptions[]}
      */
@@ -327,7 +332,7 @@ export function tsConfigFromExports(opts) {
                 }
 
                 // 当是 d.ts 源文件或强制生成类型时
-                if (opts.forceGenTypes || (hasTypes && typesSourceFile === distFile && opts.forceGenTypes !== false)) {
+                if (forceGenTypes || (hasTypes && typesSourceFile === distFile && forceGenTypes !== false)) {
                     setGenTypes(plugins, distFile);
                     typesGenerated = true;
                 }
