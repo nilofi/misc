@@ -16,7 +16,7 @@
   "devDependencies": {
     "@commitlint/cli": "^18.2.0",
     "@commitlint/config-conventional": "^18.1.0",
-    "@xenon.js/prettier-config": "^1.0.2",
+    "@xenon.js/prettier-config": "workspace:^",
     "@xenon.js/ts-config": "workspace:^",
     "cross-env": "^7.0.3",
     "husky": "^8.0.3",
