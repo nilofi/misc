@@ -23,6 +23,11 @@ export interface PackageJsonXenonSettings {
              * 传入该属性控制是否强制生成或不生成 `d.ts` 文件，默认 `undefined` 自动判断
              */
             forceGenTypes?: boolean;
+
+            /**
+             * 是否捆绑 `d.ts` 文件，默认 `false`
+             */
+            bundleTypes?: boolean;
         };
     };
 }

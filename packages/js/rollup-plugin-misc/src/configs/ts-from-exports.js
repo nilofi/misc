@@ -286,6 +286,7 @@ export function tsConfigFromExports(opts) {
     } = getCommonThings(opts);
 
     const forceGenTypes = packageJson.xenon?.build?.forceGenTypes ?? opts.forceGenTypes;
+    const bundleTypes = packageJson.xenon?.build?.bundleTypes ?? opts.bundleTypes;
 
     /**
      * @type {import("rollup").RollupOptions[]}
@@ -346,7 +347,7 @@ export function tsConfigFromExports(opts) {
                 throw new Error("can't find the source file for types");
             }
 
-            if (opts.bundleTypes && typesGenerated) {
+            if (bundleTypes && typesGenerated) {
                 const inputFile = typesObject.types;
                 const distFile = opts.toBundleDistFileName === "default" ? toBundleDistFileName(inputFile) : opts.toBundleDistFileName ? opts.toBundleDistFileName(inputFile) : inputFile;
                 if (!isDuplicate(distFile)) {
