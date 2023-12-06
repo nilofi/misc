@@ -309,8 +309,13 @@ export function tsConfigFromExports(opts) {
 
                 const distFile = typesObject[type];
                 const inputFile = getInputFile(distFile);
+                // 是否是 d.ts 源文件或强制生成类型
+                const isGenTypesFile = forceGenTypes || (hasTypes && typesSourceFile === distFile && forceGenTypes !== false);
 
                 if (isDuplicate(distFile)) {
+                    if (isGenTypesFile) {
+                        typesGenerated = true;
+                    }
                     continue;
                 }
 
@@ -332,8 +337,8 @@ export function tsConfigFromExports(opts) {
                     setMacroReplace(plugins, opts);
                 }
 
-                // 当是 d.ts 源文件或强制生成类型时
-                if (forceGenTypes || (hasTypes && typesSourceFile === distFile && forceGenTypes !== false)) {
+                // 生成 d.ts 文件
+                if (isGenTypesFile) {
                     setGenTypes(plugins, distFile);
                     typesGenerated = true;
                 }
@@ -344,15 +349,19 @@ export function tsConfigFromExports(opts) {
             }
 
             if (hasTypes && !typesGenerated && forceGenTypes !== false) {
-                throw new Error("can't find the source file for types");
+                throw new Error("can't find the source file for types.");
             }
 
             if (bundleTypes && typesGenerated) {
                 const inputFile = typesObject.types;
-                const distFile = opts.toBundleDistFileName === "default" ? toBundleDistFileName(inputFile) : opts.toBundleDistFileName ? opts.toBundleDistFileName(inputFile) : inputFile;
-                if (!isDuplicate(distFile)) {
-                    const config = bundleTypesConfig(inputFile, distFile, target, external);
-                    configs.push(config);
+                if (inputFile) {
+                    const distFile = opts.toBundleDistFileName === "default" ? toBundleDistFileName(inputFile) : opts.toBundleDistFileName ? opts.toBundleDistFileName(inputFile) : inputFile;
+                    if (!isDuplicate(distFile)) {
+                        const config = bundleTypesConfig(inputFile, distFile, target, external);
+                        configs.push(config);
+                    }
+                } else {
+                    throw new Error('if you want to bundle types, you must have a "types" property.');
                 }
             }
         }
