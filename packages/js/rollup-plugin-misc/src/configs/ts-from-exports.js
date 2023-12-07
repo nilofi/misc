@@ -134,7 +134,7 @@ function getTypesSourceFile(distFile) {
  */
 function treeshakeConfig() {
     return {
-        moduleSideEffects: false,
+        // moduleSideEffects: false,
     };
 }
 
