@@ -14,6 +14,8 @@ import { replaceFromLast } from "../common/utils/string.js";
 import { clear } from "../plugins/clear/index.js";
 import { renameBundleStatsReport } from "../plugins/rename-bundle-stats-report/index.js";
 
+const ROLLUP_WATCH = process.env.ROLLUP_WATCH === "true";
+
 /**
  * @typedef Options
  *
@@ -387,7 +389,7 @@ export function tsConfigFromExports(opts) {
     }
 
     // 清空输出目录
-    if (cleanPaths.length > 0) {
+    if (!ROLLUP_WATCH && cleanPaths.length > 0) {
         addClearPlugin(configs, cleanPaths);
     }
 
@@ -504,7 +506,7 @@ export function tsSizeReportConfigFromExports(opts) {
     }
 
     // 清空输出目录
-    if (cleanPaths.length > 0) {
+    if (!ROLLUP_WATCH && cleanPaths.length > 0) {
         addClearPlugin(configs, cleanPaths);
     }
 
