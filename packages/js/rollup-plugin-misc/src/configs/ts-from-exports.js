@@ -11,6 +11,7 @@ import { bundleStats } from "rollup-plugin-bundle-stats";
 import dts from "rollup-plugin-dts";
 import { getExternal, getExternalRegexp } from "../common/utils/external.js";
 import { replaceFromLast } from "../common/utils/string.js";
+import { clear } from "../plugins/clear/index.js";
 import { renameBundleStatsReport } from "../plugins/rename-bundle-stats-report/index.js";
 
 /**
@@ -256,7 +257,11 @@ function setGenTypes(plugins, distFile) {
 function addClearPlugin(configs, paths) {
     const firstConfig = configs[0];
     // @ts-ignore
-    firstConfig.plugins.push({});
+    firstConfig.plugins.unshift(
+        clear({
+            targets: paths,
+        }),
+    );
 }
 
 /**

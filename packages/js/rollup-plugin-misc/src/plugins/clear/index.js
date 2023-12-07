@@ -6,7 +6,6 @@ import { rimraf } from "rimraf";
  * @typedef ClearOptions
  *
  * @property {string[]} targets
- * @property {boolean} [watch]
  */
 
 /**
