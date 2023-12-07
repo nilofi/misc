@@ -16,6 +16,7 @@ import { renameBundleStatsReport } from "../plugins/rename-bundle-stats-report/i
 /**
  * @typedef Options
  *
+ * @property {string[]} [clean] 打包前清空路径列表
  * @property {(string | RegExp)[]} [external] 不捆绑的包列表
  * @property {boolean} [autoExternal] 根据 {@link getExternal} 策略自动生成 `external` 列表，如果已经传入了 `external` 字段，则会与其合并，默认 `true`
  * @property {boolean} [forceGenTypes] 传入该属性控制是否强制生成或不生成 `d.ts` 文件，默认 `undefined` 自动判断
@@ -247,6 +248,18 @@ function setGenTypes(plugins, distFile) {
 }
 
 /**
+ * 插入清空插件
+ *
+ * @param {import("rollup").RollupOptions[]} configs
+ * @param {string[]} paths
+ */
+function addClearPlugin(configs, paths) {
+    const firstConfig = configs[0];
+    // @ts-ignore
+    firstConfig.plugins.push({});
+}
+
+/**
  * 将 `external` 名称列表转换为模块正则表达式列表
  *
  * @param {string[]} names
@@ -287,6 +300,7 @@ export function tsConfigFromExports(opts) {
 
     const forceGenTypes = packageJson.xenon?.build?.forceGenTypes ?? opts.forceGenTypes;
     const bundleTypes = packageJson.xenon?.build?.bundleTypes ?? opts.bundleTypes;
+    const cleanPaths = (packageJson.xenon?.build?.clean ?? []).concat(opts.clean ?? []);
 
     /**
      * @type {import("rollup").RollupOptions[]}
@@ -367,6 +381,11 @@ export function tsConfigFromExports(opts) {
         }
     }
 
+    // 清空输出目录
+    if (cleanPaths.length > 0) {
+        addClearPlugin(configs, cleanPaths);
+    }
+
     return configs;
 }
 
@@ -386,6 +405,7 @@ export function tsSizeReportConfigFromExports(opts) {
     } = getCommonThings(opts);
 
     const reportDir = opts.reportPath;
+    const cleanPaths = (packageJson.xenon?.build?.clean ?? []).concat(opts.clean ?? []);
 
     mkdirSync(reportDir, { recursive: true });
 
@@ -476,6 +496,11 @@ export function tsSizeReportConfigFromExports(opts) {
                 configs.push(config);
             }
         }
+    }
+
+    // 清空输出目录
+    if (cleanPaths.length > 0) {
+        addClearPlugin(configs, cleanPaths);
     }
 
     return configs;

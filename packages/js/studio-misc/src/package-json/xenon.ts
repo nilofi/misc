@@ -13,6 +13,13 @@ export interface PackageJsonXenonSettings {
             autoExternal?: boolean;
 
             /**
+             * 打包前清空路径列表
+             *
+             * 该属性会与构建时传入的参数进行合并
+             */
+            clean?: string[];
+
+            /**
              * 不捆绑的包名称列表，会转为模块正则表达式
              *
              * 该属性会与构建时传入的参数进行合并
