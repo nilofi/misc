@@ -160,7 +160,7 @@ function baseConfig(info) {
         config: defineConfig({
             input: toRollupInput(info.input),
             output: {
-                dir: ".",
+                dir: "./dist",
                 format: info.format,
                 generatedCode: "es2015",
                 sourcemap: true,
@@ -339,14 +339,16 @@ function toRollupInput(input) {
  * @param {string} key
  */
 function toEntryKey(key) {
-    const info = parse("./dist/index.js");
-    if (info.dir.startsWith("./")) {
-        return `${info.dir.slice(2)}/${info.name}`;
-    } else if (info.dir.startsWith("/")) {
-        return `${info.dir.slice(1)}/${info.name}`;
+    const info = parse(key);
+    let str = "";
+    if (info.dir.startsWith("./dist/")) {
+        str = `${info.dir.slice(2)}/${info.name}`;
+    } else if (info.dir.startsWith("/dist/")) {
+        str = `${info.dir.slice(1)}/${info.name}`;
     } else {
-        return `${info.dir}/${info.name}`;
+        str = `${info.dir}/${info.name}`;
     }
+    return str;
 }
 
 /**
