@@ -158,7 +158,7 @@ function treeshakeConfig() {
 function baseConfig(info) {
     return {
         config: defineConfig({
-            input: info.input,
+            input: toRollupInput(info.input),
             output: {
                 dir: ".",
                 format: info.format,
@@ -312,6 +312,40 @@ function toFormat(type) {
 
         default:
             return "es";
+    }
+}
+
+/**
+ * 将 {@link BuildInfo.input} 转换为 `rollup` 的 `input` 格式
+ *
+ * @param {BuildInfo["input"]} input
+ * @returns {import("rollup").RollupOptions["input"]}
+ */
+function toRollupInput(input) {
+    const _keys = Object.keys(input);
+    /**
+     * @type {import("rollup").RollupOptions["input"]}
+     */
+    const out = {};
+    for (const _key of _keys) {
+        out[toEntryKey(_key)] = input[_key];
+    }
+    return out;
+}
+
+/**
+ * `./dist/index.js` -> `dist/index`
+ *
+ * @param {string} key
+ */
+function toEntryKey(key) {
+    const info = parse("./dist/index.js");
+    if (info.dir.startsWith("./")) {
+        return `${info.dir.slice(2)}/${info.name}`;
+    } else if (info.dir.startsWith("/")) {
+        return `${info.dir.slice(1)}/${info.name}`;
+    } else {
+        return `${info.dir}/${info.name}`;
     }
 }
 
