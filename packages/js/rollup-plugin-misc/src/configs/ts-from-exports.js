@@ -1,10 +1,11 @@
+import commonjs from "@rollup/plugin-commonjs";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
 import { packageJsonUtils } from "@xenon.js/studio-misc";
 import { mkdirSync, readFileSync } from "fs";
-import { basename, extname, format, join, parse, relative } from "path";
+import { format, join, parse, relative } from "path";
 import { cwd } from "process";
 import { defineConfig } from "rollup";
 import { bundleStats } from "rollup-plugin-bundle-stats";
@@ -110,7 +111,97 @@ function getCommonThings(opts) {
          * 经过处理的 `external` 列表
          */
         external: autoExternal ? getExternal(packageJson, external) : external ?? [],
+
+        /**
+         * 传入该属性控制是否强制生成或不生成 `d.ts` 文件，默认 `undefined` 自动判断
+         */
+        forceGenTypes: packageJson.xenon?.build?.forceGenTypes ?? opts.forceGenTypes,
+
+        /**
+         * 是否捆绑 `d.ts` 文件，默认 `false`
+         */
+        bundleTypes: packageJson.xenon?.build?.bundleTypes ?? opts.bundleTypes,
+
+        /**
+         * 打包前清空路径列表
+         */
+        cleanPaths: (packageJson.xenon?.build?.clean ?? []).concat(opts.clean ?? []),
     };
+}
+
+/**
+ * 将 `exports` 转换为 {@link BuildInfo} 集合
+ *
+ * @param {import("@xenon.js/studio-misc").PackageJsonExportsOutput} exports
+ * @param {boolean} forceGenTypes
+ * @returns {Map<string, Map<string,BuildInfo>>}
+ */
+function toBuildInfos(exports, forceGenTypes) {
+    const infos = new Map();
+
+    /**
+     * @param {string} target
+     * @param {string} type
+     * @param {SubPathInfo} subPathInfo
+     */
+    const addSubPath = (target, type, subPathInfo) => {
+        const format = toFormat(type);
+
+        if (!infos.has(target)) {
+            infos.set(target, new Map());
+        }
+        const infoMap = infos.get(target);
+
+        if (!infoMap.has(format)) {
+            infoMap.set(format, { input: {}, target, format, typesInput: null });
+        }
+        const info = infoMap.get(format);
+
+        info.input[subPathInfo.key] = subPathInfo.input;
+
+        if (subPathInfo.typesInput != null) {
+            if (info.typesInput != null) {
+                if (subPathInfo.typesInput !== "") {
+                    info.typesInput = subPathInfo.typesInput;
+                }
+            } else {
+                info.typesInput = subPathInfo.typesInput;
+            }
+        }
+    };
+
+    // 将所有配置转到 infos 中
+    for (const path in exports) {
+        const targets = exports[path];
+
+        for (const target in targets) {
+            const typesObject = targets[target];
+            const hasTypes = typesObject.types != null;
+            const typesSourceFile = hasTypes ? getTypesSourceFile(typesObject.types) : null;
+            let isSourceFileFind = false;
+
+            for (const type in typesObject) {
+                if (type === "types") continue;
+
+                const distFile = typesObject[type];
+                const inputFile = getInputFile(distFile);
+
+                if (hasTypes && typesSourceFile === distFile) {
+                    isSourceFileFind = true;
+                }
+
+                const genTypes = (isSourceFileFind && forceGenTypes !== false) || forceGenTypes;
+
+                addSubPath(target, type, { key: distFile, input: inputFile, typesInput: genTypes ? typesSourceFile ?? "" : null });
+            }
+
+            if (hasTypes && !isSourceFileFind && forceGenTypes == undefined) {
+                throw new Error("can't find the source file for types.");
+            }
+        }
+    }
+
+    return infos;
 }
 
 /**
@@ -195,6 +286,8 @@ function baseConfig(info) {
             // @ts-ignore
             this.config.plugins.push(
                 // @ts-ignore
+                commonjs(),
+                // @ts-ignore
                 nodeResolve({
                     exportConditions: [info.target],
                 }),
@@ -222,6 +315,8 @@ function bundleTypesConfig(input, dist, target, external) {
         external,
         preserveSymlinks: true,
         plugins: [
+            // @ts-ignore
+            commonjs(),
             // @ts-ignore
             nodeResolve({
                 exportConditions: [target, "types"],
@@ -370,11 +465,10 @@ export function tsConfigFromExports(opts) {
         isDuplicate,
         exports,
         external,
+        forceGenTypes,
+        bundleTypes,
+        cleanPaths,
     } = getCommonThings(opts);
-
-    const forceGenTypes = packageJson.xenon?.build?.forceGenTypes ?? opts.forceGenTypes;
-    const bundleTypes = packageJson.xenon?.build?.bundleTypes ?? opts.bundleTypes;
-    const cleanPaths = (packageJson.xenon?.build?.clean ?? []).concat(opts.clean ?? []);
 
     /**
      * @type {import("rollup").RollupOptions[]}
@@ -384,69 +478,7 @@ export function tsConfigFromExports(opts) {
     /**
      * @type {Map<string, Map<string,BuildInfo>>} target -> format -> buildInfo
      */
-    const infos = new Map();
-
-    /**
-     * @param {string} target
-     * @param {string} type
-     * @param {SubPathInfo} subPathInfo
-     */
-    const addSubPath = (target, type, subPathInfo) => {
-        const format = toFormat(type);
-
-        if (!infos.has(target)) {
-            infos.set(target, new Map());
-        }
-        const infoMap = infos.get(target);
-
-        if (!infoMap.has(format)) {
-            infoMap.set(format, { input: {}, target, format, typesInput: null });
-        }
-        const info = infoMap.get(format);
-
-        info.input[subPathInfo.key] = subPathInfo.input;
-
-        if (subPathInfo.typesInput != null) {
-            if (info.typesInput != null) {
-                if (subPathInfo.typesInput !== "") {
-                    info.typesInput = subPathInfo.typesInput;
-                }
-            } else {
-                info.typesInput = subPathInfo.typesInput;
-            }
-        }
-    };
-
-    // 将所有配置转到 infos 中
-    for (const path in exports) {
-        const targets = exports[path];
-
-        for (const target in targets) {
-            const typesObject = targets[target];
-            const hasTypes = typesObject.types != null;
-            const typesSourceFile = hasTypes ? getTypesSourceFile(typesObject.types) : null;
-            let isSourceFileFind = false;
-
-            for (const type in typesObject) {
-                if (type === "types") continue;
-
-                const distFile = typesObject[type];
-                const inputFile = getInputFile(distFile);
-
-                if (hasTypes && typesSourceFile === distFile) {
-                    isSourceFileFind = true;
-                }
-
-                const genTypes = (isSourceFileFind && forceGenTypes !== false) || forceGenTypes;
-
-                addSubPath(target, type, { key: distFile, input: inputFile, typesInput: genTypes ? typesSourceFile ?? "" : null });
-            }
-
-            if (hasTypes && !isSourceFileFind && forceGenTypes == undefined) {
-                throw new Error("can't find the source file for types.");
-            }
-        }
-    }
+    const infos = toBuildInfos(exports, forceGenTypes);
 
     for (const [target, formatMap] of infos) {
         let typesGenerated = false;
@@ -524,10 +556,14 @@ export function tsSizeReportConfigFromExports(opts) {
         isDuplicate,
         exports,
         external,
+        cleanPaths,
+        forceGenTypes,
     } = getCommonThings(opts);
 
-    const reportDir = opts.reportPath;
-    const cleanPaths = (packageJson.xenon?.build?.clean ?? []).concat(opts.clean ?? []);
+    const {
+        // prettier-keep
+        reportPath: reportDir,
+    } = opts;
 
     mkdirSync(reportDir, { recursive: true });
 
@@ -536,87 +572,80 @@ export function tsSizeReportConfigFromExports(opts) {
      */
     const configs = [];
 
-    for (const path in exports) {
-        const targets = exports[path];
-        for (const target in targets) {
-            const typesObject = targets[target];
+    /**
+     * @type {Map<string, Map<string,BuildInfo>>} target -> format -> buildInfo
+     */
+    const infos = toBuildInfos(exports, forceGenTypes);
 
-            for (const type in typesObject) {
-                if (type === "types") {
-                    continue;
-                }
+    for (const formatMap of infos.values()) {
+        for (const info of formatMap.values()) {
+            // 可以处理的重复入口文件都在 addSubPath 中处理了
+            // 这里有重复入口文件是错误的
+            if (Object.keys(info.input).some(v => isDuplicate(v))) {
+                throw new Error("different target or different format can't have the same entry file.");
+            }
 
-                const distFile = typesObject[type];
-                const inputFile = getInputFile(distFile);
+            const data = baseConfig(info);
+            const {
+                // prettier-keep
+                config,
+                plugins,
+                applyPlugins,
+            } = data;
 
-                if (isDuplicate(distFile)) {
-                    continue;
-                }
+            // 排除包
+            if (external) {
+                config.external = external;
+            }
 
-                const data = baseConfig(inputFile, distFile, target);
-                const {
-                    // prettier-keep
-                    config,
-                    plugins,
-                    applyPlugins,
-                } = data;
+            // 当有宏替换配置时
+            if (opts.macros) {
+                setMacroReplace(plugins, opts);
+            }
 
-                // 排除包
-                if (external) {
-                    config.external = external;
-                }
+            const name = packageJson.name.replaceAll("@", "").replaceAll("/", "-");
+            const baselineDir = join(reportDir, "baselines");
+            const baselineFile = join(baselineDir, `${name}.${info.target}.${info.format}.baseline.json`);
 
-                // 当有宏替换配置时
-                if (opts.macros) {
-                    setMacroReplace(plugins, opts);
-                }
+            // @ts-ignore
+            config.plugins.push(
+                // @ts-ignore
+                terser({
+                    ecma: 2020,
+                }),
+                bundleStats({
+                    compare: true,
+                    baseline: false,
+                    baselineFilepath: baselineFile,
+                    outDir: relative(cwd(), reportDir),
+                }),
+            );
 
-                const reportDir = opts.reportPath;
-                const name = packageJson.name.replaceAll("@", "").replaceAll("/", "-");
-                const distName = basename(distFile, extname(distFile));
-                const baselineDir = join(reportDir, "baselines");
-                const baselineFile = join(baselineDir, `${name}.${distName}.baseline.json`);
-
+            if (opts.isBaseline) {
                 // @ts-ignore
                 config.plugins.push(
-                    // @ts-ignore
-                    terser({
-                        ecma: 2020,
-                    }),
                     bundleStats({
-                        compare: true,
-                        baseline: false,
+                        compare: false,
+                        baseline: true,
                         baselineFilepath: baselineFile,
                         outDir: relative(cwd(), reportDir),
+                        html: false,
+                        json: false,
                     }),
                 );
-
-                if (opts.isBaseline) {
-                    // @ts-ignore
-                    config.plugins.push(
-                        bundleStats({
-                            compare: false,
-                            baseline: true,
-                            baselineFilepath: baselineFile,
-                            outDir: relative(cwd(), reportDir),
-                            html: false,
-                            json: false,
-                        }),
-                    );
-                }
-
-                // @ts-ignore
-                config.plugins.push(
-                    renameBundleStatsReport({
-                        source: join(reportDir, "bundle-stats.html"),
-                        dist: join(reportDir, `${name}.${distName}.bundle-stats.html`),
-                    }),
-                );
-
-                applyPlugins.call(data);
-
-                configs.push(config);
             }
+
+            // @ts-ignore
+            config.plugins.push(
+                renameBundleStatsReport({
+                    source: join(reportDir, "bundle-stats.html"),
+                    dist: join(reportDir, `${name}.${info.target}.${info.format}.bundle-stats.html`),
+                }),
+            );
+
+            applyPlugins.call(data);
+
+            configs.push(config);
         }
     }
 
