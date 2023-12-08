@@ -341,9 +341,9 @@ function toRollupInput(input) {
 function toEntryKey(key) {
     const info = parse(key);
     let str = "";
-    if (info.dir.startsWith("./dist/")) {
+    if (info.dir.startsWith("./dist")) {
         str = `${info.dir.slice(2)}/${info.name}`;
-    } else if (info.dir.startsWith("/dist/")) {
+    } else if (info.dir.startsWith("/dist")) {
         str = `${info.dir.slice(1)}/${info.name}`;
     } else {
         str = `${info.dir}/${info.name}`;
@@ -451,7 +451,7 @@ export function tsConfigFromExports(opts) {
         let typesGenerated = false;
         let bundleInputFile = "";
 
-        for (const [format, info] of formatMap) {
+        for (const info of formatMap.values()) {
             // 可以处理的重复入口文件都在 addSubPath 中处理了
             // 这里有重复入口文件是错误的
             if (Object.keys(info.input).some(v => isDuplicate(v))) {
