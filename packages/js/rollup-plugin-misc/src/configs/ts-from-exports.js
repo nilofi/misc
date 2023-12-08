@@ -342,12 +342,13 @@ function toEntryKey(key) {
     const info = parse(key);
     let str = "";
     if (info.dir.startsWith("./dist")) {
-        str = `${info.dir.slice(2)}/${info.name}`;
+        str = info.dir.replace("./dist", "");
     } else if (info.dir.startsWith("/dist")) {
-        str = `${info.dir.slice(1)}/${info.name}`;
+        str = info.dir.replace("/dist", "");
     } else {
-        str = `${info.dir}/${info.name}`;
+        str = info.dir;
     }
+    str = join(str, info.name);
     return str;
 }
 
