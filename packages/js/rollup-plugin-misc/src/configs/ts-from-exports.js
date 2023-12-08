@@ -4,7 +4,7 @@ import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
 import { packageJsonUtils } from "@xenon.js/studio-misc";
 import { mkdirSync, readFileSync } from "fs";
-import { basename, dirname, extname, format, join, parse, relative } from "path";
+import { basename, extname, format, join, parse, relative } from "path";
 import { cwd } from "process";
 import { defineConfig } from "rollup";
 import { bundleStats } from "rollup-plugin-bundle-stats";
@@ -35,6 +35,18 @@ const ROLLUP_WATCH = process.env.ROLLUP_WATCH === "true";
  * @property {boolean} isBaseline 是否以此生成新的基准
  *
  * @typedef {Options & _SizeReportOptions} SizeReportOptions
+ */
+
+/**
+ * @typedef {{typesInput:string|null}} SubPathInfoOptions
+ */
+
+/**
+ * @typedef {{input:{[name:string]:string},format:import("rollup").InternalModuleFormat,target:string} & SubPathInfoOptions} BuildInfo
+ */
+
+/**
+ * @typedef {{key:string,input:string} & SubPathInfoOptions} SubPathInfo
  */
 
 /**
@@ -141,16 +153,15 @@ function treeshakeConfig() {
 /**
  * 基础配置
  *
- * @param {string} input
- * @param {string} dist
- * @param {string} target
+ * @param {BuildInfo} info
  */
-function baseConfig(input, dist, target) {
+function baseConfig(info) {
     return {
         config: defineConfig({
-            input: input,
+            input: info.input,
             output: {
-                file: dist,
+                dir: ".",
+                format: info.format,
                 generatedCode: "es2015",
                 sourcemap: true,
             },
@@ -166,7 +177,7 @@ function baseConfig(input, dist, target) {
                 declaration: false,
                 declarationMap: false,
                 declarationDir: undefined,
-                customConditions: [target],
+                customConditions: [info.target],
             },
             /**
              * @type {import("@rollup/plugin-replace").RollupReplaceOptions}
@@ -185,7 +196,7 @@ function baseConfig(input, dist, target) {
             this.config.plugins.push(
                 // @ts-ignore
                 nodeResolve({
-                    exportConditions: [target],
+                    exportConditions: [info.target],
                 }),
             );
         },
@@ -242,12 +253,11 @@ function setMacroReplace(plugins, opts) {
  * @param {{
     typescript: import("@rollup/plugin-typescript").RollupTypescriptOptions;
 }} plugins
- * @param {string} distFile
  */
-function setGenTypes(plugins, distFile) {
+function setGenTypes(plugins) {
     plugins.typescript.declaration = true;
     plugins.typescript.declarationMap = true;
-    plugins.typescript.declarationDir = dirname(distFile);
+    plugins.typescript.declarationDir = "./dist";
 }
 
 /**
@@ -277,12 +287,32 @@ export function toExternalRegexps(names) {
 
 /**
  * 路径转换为 `*.bundle.d.ts` 文件名
+ *
+ * @param {string} input
  */
 function toBundleDistFileName(input) {
     const temp = parse(input);
     temp.name = replaceFromLast(temp.name, ".d", ".bundle.d");
     temp.base = temp.name + temp.ext;
     return format(temp);
+}
+
+/**
+ * `exports` 中的 `type` 转为 `format`
+ *
+ * @param {string} type
+ */
+function toFormat(type) {
+    switch (type) {
+        case "import":
+            return "es";
+
+        case "require":
+            return "cjs";
+
+        default:
+            return "es";
+    }
 }
 
 /**
@@ -314,76 +344,124 @@ export function tsConfigFromExports(opts) {
      */
     const configs = [];
 
+    /**
+     * @type {Map<string, Map<string,BuildInfo>>} target -> format -> buildInfo
+     */
+    const infos = new Map();
+
+    /**
+     * @param {string} target
+     * @param {string} type
+     * @param {SubPathInfo} subPathInfo
+     */
+    const addSubPath = (target, type, subPathInfo) => {
+        const format = toFormat(type);
+
+        if (!infos.has(target)) {
+            infos.set(target, new Map());
+        }
+        const infoMap = infos.get(target);
+
+        if (!infoMap.has(format)) {
+            infoMap.set(format, { input: {}, target, format, typesInput: null });
+        }
+        const info = infoMap.get(format);
+
+        info.input[subPathInfo.key] = subPathInfo.input;
+
+        if (subPathInfo.typesInput != null) {
+            if (info.typesInput != null) {
+                if (subPathInfo.typesInput !== "") {
+                    info.typesInput = subPathInfo.typesInput;
+                }
+            } else {
+                info.typesInput = subPathInfo.typesInput;
+            }
+        }
+    };
+
+    // 将所有配置转到 infos 中
     for (const path in exports) {
         const targets = exports[path];
+
         for (const target in targets) {
             const typesObject = targets[target];
-
             const hasTypes = typesObject.types != null;
             const typesSourceFile = hasTypes ? getTypesSourceFile(typesObject.types) : null;
-            let typesGenerated = false;
+            let isSourceFileFind = false;
 
             for (const type in typesObject) {
-                if (type === "types") {
-                    continue;
-                }
+                if (type === "types") continue;
 
                 const distFile = typesObject[type];
                 const inputFile = getInputFile(distFile);
-                // 是否是 d.ts 源文件或强制生成类型
-                const isGenTypesFile = forceGenTypes || (hasTypes && typesSourceFile === distFile && forceGenTypes !== false);
 
-                if (isDuplicate(distFile)) {
-                    if (isGenTypesFile) {
-                        typesGenerated = true;
-                    }
-                    continue;
+                if (hasTypes && typesSourceFile === distFile) {
+                    isSourceFileFind = true;
                 }
 
-                const data = baseConfig(inputFile, distFile, target);
-                const {
-                    // prettier-keep
-                    config,
-                    plugins,
-                    applyPlugins,
-                } = data;
+                const genTypes = (isSourceFileFind && forceGenTypes !== false) || forceGenTypes;
 
-                // 排除包
-                if (external) {
-                    config.external = external;
-                }
-
-                // 当有宏替换配置时
-                if (opts.macros) {
-                    setMacroReplace(plugins, opts);
-                }
-
-                // 生成 d.ts 文件
-                if (isGenTypesFile) {
-                    setGenTypes(plugins, distFile);
-                    typesGenerated = true;
-                }
-
-                applyPlugins.call(data);
-
-                configs.push(config);
+                addSubPath(target, type, { key: distFile, input: inputFile, typesInput: genTypes ? typesSourceFile ?? "" : null });
             }
 
-            if (hasTypes && !typesGenerated && forceGenTypes !== false) {
+            if (hasTypes && !isSourceFileFind && forceGenTypes == undefined) {
                 throw new Error("can't find the source file for types.");
             }
+        }
+    }
 
-            if (bundleTypes && typesGenerated) {
-                const inputFile = typesObject.types;
-                if (inputFile) {
-                    const distFile = opts.toBundleDistFileName === "default" ? toBundleDistFileName(inputFile) : opts.toBundleDistFileName ? opts.toBundleDistFileName(inputFile) : inputFile;
-                    if (!isDuplicate(distFile)) {
-                        const config = bundleTypesConfig(inputFile, distFile, target, external);
-                        configs.push(config);
-                    }
-                } else {
-                    throw new Error('if you want to bundle types, you must have a "types" property.');
+    for (const [target, formatMap] of infos) {
+        let typesGenerated = false;
+        let bundleInputFile = "";
+
+        for (const [format, info] of formatMap) {
+            // 可以处理的重复入口文件都在 addSubPath 中处理了
+            // 这里有重复入口文件是错误的
+            if (Object.keys(info.input).some(v => isDuplicate(v))) {
+                throw new Error("different target or different format can't have the same entry file.");
+            }
+
+            const data = baseConfig(info);
+            const {
+                // prettier-keep
+                config,
+                plugins,
+                applyPlugins,
+            } = data;
+
+            // 排除包
+            if (external) {
+                config.external = external;
+            }
+
+            // 当有宏替换配置时
+            if (opts.macros) {
+                setMacroReplace(plugins, opts);
+            }
+
+            // 生成 d.ts 文件
+            if (info.typesInput != null) {
+                setGenTypes(plugins);
+                bundleInputFile = info.typesInput;
+                typesGenerated = true;
+            }
+
+            applyPlugins.call(data);
+
+            configs.push(config);
+        }
+
+        if (bundleTypes && typesGenerated) {
+            const inputFile = bundleInputFile;
+            if (inputFile) {
+                const distFile = opts.toBundleDistFileName === "default" ? toBundleDistFileName(inputFile) : opts.toBundleDistFileName ? opts.toBundleDistFileName(inputFile) : inputFile;
+                if (!isDuplicate(distFile)) {
+                    const config = bundleTypesConfig(inputFile, distFile, target, external);
+                    configs.push(config);
                 }
+            } else {
+                throw new Error('if you want to bundle types, you must have a "types" property.');
             }
         }
     }
