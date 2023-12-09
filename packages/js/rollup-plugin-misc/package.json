@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/rollup-plugin-misc",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "A Rollup plugin with several miscellaneous features used by Xenon Studio.",
   "keywords": [
     "xenon",

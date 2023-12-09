@@ -381,6 +381,19 @@ export function toExternalRegexps(names) {
 }
 
 /**
+ * 路径转换为 `*.d.ts` 文件名
+ *
+ * @param {string} input
+ */
+function toBundleInputFileName(input) {
+    const temp = parse(input);
+    temp.name = temp.name + ".d";
+    temp.ext = ".ts";
+    temp.base = temp.name + temp.ext;
+    return format(temp);
+}
+
+/**
  * 路径转换为 `*.bundle.d.ts` 文件名
  *
  * @param {string} input
@@ -481,9 +494,6 @@ export function tsConfigFromExports(opts) {
     const infos = toBuildInfos(exports, forceGenTypes);
 
     for (const [target, formatMap] of infos) {
-        let typesGenerated = false;
-        let bundleInputFile = "";
-
         for (const info of formatMap.values()) {
             // 可以处理的重复入口文件都在 addSubPath 中处理了
             // 这里有重复入口文件是错误的
@@ -512,25 +522,27 @@ export function tsConfigFromExports(opts) {
             // 生成 d.ts 文件
             if (info.typesInput != null) {
                 setGenTypes(plugins);
-                bundleInputFile = info.typesInput;
-                typesGenerated = true;
             }
 
             applyPlugins.call(data);
 
             configs.push(config);
         }
+    }
 
-        if (bundleTypes && typesGenerated) {
-            const inputFile = bundleInputFile;
-            if (inputFile) {
-                const distFile = opts.toBundleDistFileName === "default" ? toBundleDistFileName(inputFile) : opts.toBundleDistFileName ? opts.toBundleDistFileName(inputFile) : inputFile;
-                if (!isDuplicate(distFile)) {
-                    const config = bundleTypesConfig(inputFile, distFile, target, external);
-                    configs.push(config);
+    if (bundleTypes) {
+        for (const [target, formatMap] of infos) {
+            for (const info of formatMap.values()) {
+                if (info.typesInput != null) {
+                    for (const key in info.input) {
+                        const inputFile = toBundleInputFileName(info.input[key]);
+                        const distFile = opts.toBundleDistFileName === "default" ? toBundleDistFileName(inputFile) : opts.toBundleDistFileName ? opts.toBundleDistFileName(inputFile) : inputFile;
+                        if (!isDuplicate(distFile)) {
+                            const config = bundleTypesConfig(inputFile, distFile, target, external);
+                            configs.push(config);
+                        }
+                    }
                 }
-            } else {
-                throw new Error('if you want to bundle types, you must have a "types" property.');
             }
         }
     }
