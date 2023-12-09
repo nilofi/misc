@@ -4,7 +4,7 @@ import replace from "@rollup/plugin-replace";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
 import { packageJsonUtils, TEMP_RELATIVE_PATH } from "@xenon.js/studio-misc";
-import { mkdirSync, readdirSync, readFileSync, rmdirSync } from "fs";
+import { mkdirSync, readFileSync } from "fs";
 import { format, join, parse, relative } from "path";
 import { cwd } from "process";
 import { defineConfig } from "rollup";
@@ -360,13 +360,15 @@ function setGenTypes(plugins) {
  *
  * @param {import("rollup").RollupOptions[]} configs
  * @param {string[]} paths
+ * @param {string[]} [pathsIfEmpty]
  */
-function addClearPlugin(configs, paths) {
+function addClearPlugin(configs, paths, pathsIfEmpty) {
     const firstConfig = configs[0];
     // @ts-ignore
     firstConfig.plugins.unshift(
         clear({
             targets: paths,
+            targetsIfEmpty: pathsIfEmpty,
         }),
     );
 }
@@ -458,18 +460,6 @@ function toEntryKey(key) {
     }
     str = join(str, info.name);
     return str;
-}
-
-/**
- * @param {string} path
- */
-export function rmdirIfEmpty(path) {
-    try {
-        const files = readdirSync(path);
-        if (files.length === 0) {
-            rmdirSync(path);
-        }
-    } catch {}
 }
 
 /**
@@ -686,10 +676,9 @@ export function tsSizeReportConfigFromExports(opts) {
         addClearPlugin(
             configs,
             cleanPaths.map(v => join(TEMP_RELATIVE_PATH, v)),
+            [TEMP_RELATIVE_PATH],
         );
     }
-
-    rmdirIfEmpty(TEMP_RELATIVE_PATH);
 
     return configs;
 }
