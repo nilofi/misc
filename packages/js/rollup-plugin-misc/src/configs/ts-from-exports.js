@@ -535,7 +535,7 @@ export function tsConfigFromExports(opts) {
             for (const info of formatMap.values()) {
                 if (info.typesInput != null) {
                     for (const key in info.input) {
-                        const inputFile = toBundleInputFileName(info.input[key]);
+                        const inputFile = toBundleInputFileName(key);
                         const distFile = opts.toBundleDistFileName === "default" ? toBundleDistFileName(inputFile) : opts.toBundleDistFileName ? opts.toBundleDistFileName(inputFile) : inputFile;
                         if (!isDuplicate(distFile)) {
                             const config = bundleTypesConfig(inputFile, distFile, target, external);
