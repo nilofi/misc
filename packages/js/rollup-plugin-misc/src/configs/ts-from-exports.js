@@ -3,8 +3,8 @@ import nodeResolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
-import { packageJsonUtils } from "@xenon.js/studio-misc";
-import { mkdirSync, readFileSync } from "fs";
+import { packageJsonUtils, TEMP_RELATIVE_PATH } from "@xenon.js/studio-misc";
+import { mkdirSync, readdirSync, readFileSync, rmdirSync } from "fs";
 import { format, join, parse, relative } from "path";
 import { cwd } from "process";
 import { defineConfig } from "rollup";
@@ -461,6 +461,18 @@ function toEntryKey(key) {
 }
 
 /**
+ * @param {string} path
+ */
+export function rmdirIfEmpty(path) {
+    try {
+        const files = readdirSync(path);
+        if (files.length === 0) {
+            rmdirSync(path);
+        }
+    } catch {}
+}
+
+/**
  * 根据 `package.json` 的 `exports` 字段生成编译 TypeScript 的 `rollup` 配置
  *
  * - 需先填写标准的 `exports` 对象格式，可参考 {@link PackageJsonExportsInput} 的类型定义
@@ -474,6 +486,7 @@ function toEntryKey(key) {
 export function tsConfigFromExports(opts) {
     const {
         // prettier-keep
+        // @ts-ignore
         packageJson,
         isDuplicate,
         exports,
@@ -493,6 +506,7 @@ export function tsConfigFromExports(opts) {
      */
     const infos = toBuildInfos(exports, forceGenTypes);
 
+    // @ts-ignore
     for (const [target, formatMap] of infos) {
         for (const info of formatMap.values()) {
             // 可以处理的重复入口文件都在 addSubPath 中处理了
@@ -615,6 +629,10 @@ export function tsSizeReportConfigFromExports(opts) {
                 setMacroReplace(plugins, opts);
             }
 
+            // 将输出目录转到 temp/dist 目录
+            // @ts-ignore
+            config.output.dir = join(TEMP_RELATIVE_PATH, "dist");
+
             const name = packageJson.name.replaceAll("@", "").replaceAll("/", "-");
             const baselineDir = join(reportDir, "baselines");
             const baselineFile = join(baselineDir, `${name}.${info.target}.${info.format}.baseline.json`);
@@ -629,7 +647,8 @@ export function tsSizeReportConfigFromExports(opts) {
                     compare: true,
                     baseline: false,
                     baselineFilepath: baselineFile,
-                    outDir: relative(cwd(), reportDir),
+                    // @ts-ignore
+                    outDir: relative(join(cwd(), config.output.dir), reportDir),
                 }),
             );
 
@@ -640,7 +659,8 @@ export function tsSizeReportConfigFromExports(opts) {
                         compare: false,
                         baseline: true,
                         baselineFilepath: baselineFile,
-                        outDir: relative(cwd(), reportDir),
+                        // @ts-ignore
+                        outDir: relative(join(cwd(), config.output.dir), reportDir),
                         html: false,
                         json: false,
                     }),
@@ -663,8 +683,13 @@ export function tsSizeReportConfigFromExports(opts) {
 
     // 清空输出目录
     if (!ROLLUP_WATCH && cleanPaths.length > 0) {
-        addClearPlugin(configs, cleanPaths);
+        addClearPlugin(
+            configs,
+            cleanPaths.map(v => join(TEMP_RELATIVE_PATH, v)),
+        );
     }
+
+    rmdirIfEmpty(TEMP_RELATIVE_PATH);
 
     return configs;
 }
