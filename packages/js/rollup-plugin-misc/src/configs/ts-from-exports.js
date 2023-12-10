@@ -364,9 +364,9 @@ function setGenTypes(plugins) {
  * @param {string[]} [pathsIfEmpty]
  */
 function addClearPlugin(isAfter, configs, paths, pathsIfEmpty) {
-    const firstConfig = configs[0];
+    const targetConfig = isAfter ? configs[configs.length - 1] : configs[0];
     // @ts-ignore
-    firstConfig.plugins.unshift(
+    targetConfig.plugins.unshift(
         (isAfter ? clearAtEnd : clear)({
             targets: paths,
             targetsIfEmpty: pathsIfEmpty,
