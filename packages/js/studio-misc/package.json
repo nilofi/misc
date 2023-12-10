@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/studio-misc",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Some miscellaneous code used by the Xenon Studio.",
   "keywords": [
     "xenon"
