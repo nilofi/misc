@@ -24,7 +24,7 @@ export function getExternalRegexp(name) {
  * @param {(string | RegExp)[]} [base]
  * @returns {import("rollup").RollupOptions["external"]}
  */
-export function getExternal(packageJson, base = []) {
+export function getAutoExternal(packageJson, base = []) {
     /**
      * 返回指定包是否私有
      *

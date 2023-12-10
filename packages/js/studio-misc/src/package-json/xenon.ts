@@ -20,6 +20,13 @@ export interface PackageJsonXenonSettings {
             clean?: string[];
 
             /**
+             * 强制捆绑的包名称列表，即使在 `external` 列表中也会强制捆绑
+             *
+             * 该属性会与构建时传入的参数进行合并
+             */
+            bundled?: string[];
+
+            /**
              * 不捆绑的包名称列表，会转为模块正则表达式
              *
              * 该属性会与构建时传入的参数进行合并

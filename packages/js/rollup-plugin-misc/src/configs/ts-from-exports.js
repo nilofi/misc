@@ -10,7 +10,7 @@ import { cwd } from "process";
 import { defineConfig } from "rollup";
 import { bundleStats } from "rollup-plugin-bundle-stats";
 import dts from "rollup-plugin-dts";
-import { getExternal, getExternalRegexp } from "../common/utils/external.js";
+import { getAutoExternal, getExternalRegexp } from "../common/utils/external.js";
 import { replaceFromLast } from "../common/utils/string.js";
 import { clear, clearAtEnd } from "../plugins/clear/index.js";
 import { renameBundleStatsReport } from "../plugins/rename-bundle-stats-report/index.js";
@@ -22,7 +22,8 @@ const ROLLUP_WATCH = process.env.ROLLUP_WATCH === "true";
  *
  * @property {string[]} [clean] 打包前清空路径列表
  * @property {(string | RegExp)[]} [external] 不捆绑的包列表
- * @property {boolean} [autoExternal] 根据 {@link getExternal} 策略自动生成 `external` 列表，如果已经传入了 `external` 字段，则会与其合并，默认 `true`
+ * @property {(string | RegExp)[]} [bundled] 强制捆绑的包列表，即使在 `external` 列表中也会强制捆绑
+ * @property {boolean} [autoExternal] 根据 {@link getAutoExternal} 策略自动生成 `external` 列表，如果已经传入了 `external` 字段，则会与其合并，默认 `true`
  * @property {boolean} [forceGenTypes] 传入该属性控制是否强制生成或不生成 `d.ts` 文件，默认 `undefined` 自动判断
  * @property {boolean} [bundleTypes] 是否捆绑 `d.ts` 文件，默认 `false`
  * @property {((input:string)=>string) | "default"} [toBundleDistFileName] 可以传入 `default`，文件将会生成在同目录的 `*.bundle.d.ts`，可以提供一个函数，返回捆绑 `d.ts` 文件的生成路径，默认覆盖源文件
@@ -65,12 +66,22 @@ function getCommonThings(opts) {
      */
     const packageJson = JSON.parse(readFileSync(join(cwd(), "./package.json"), { encoding: "utf-8" }));
 
-    let { autoExternal = opts.autoExternal ?? true, external = [] } = packageJson.xenon?.build ?? {};
+    let {
+        // prettier-keep
+        autoExternal = opts.autoExternal ?? true,
+        external = [],
+        bundled = [],
+    } = packageJson.xenon?.build ?? {};
 
     external = external.map(name => getExternalRegexp(name));
+    bundled = bundled.map(name => getExternalRegexp(name));
 
     if (opts.external) {
         external.push(...opts.external);
+    }
+
+    if (opts.bundled) {
+        bundled.push(...opts.bundled);
     }
 
     /**
@@ -110,7 +121,7 @@ function getCommonThings(opts) {
         /**
          * 经过处理的 `external` 列表
          */
-        external: autoExternal ? getExternal(packageJson, external) : external ?? [],
+        external: (autoExternal ? getAutoExternal(packageJson, external) : external ?? []).filter(v => !bundled.some(v2 => v2 === v)),
 
         /**
          * 传入该属性控制是否强制生成或不生成 `d.ts` 文件，默认 `undefined` 自动判断
