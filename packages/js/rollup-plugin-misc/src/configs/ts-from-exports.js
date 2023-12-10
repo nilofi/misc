@@ -367,7 +367,7 @@ function addClearPlugin(isAfter, configs, paths, pathsIfEmpty) {
     const firstConfig = configs[0];
     // @ts-ignore
     firstConfig.plugins.unshift(
-        (isAfter ? clear : clearAtEnd)({
+        (isAfter ? clearAtEnd : clear)({
             targets: paths,
             targetsIfEmpty: pathsIfEmpty,
         }),
