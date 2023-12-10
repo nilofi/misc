@@ -12,7 +12,7 @@ import { bundleStats } from "rollup-plugin-bundle-stats";
 import dts from "rollup-plugin-dts";
 import { getExternal, getExternalRegexp } from "../common/utils/external.js";
 import { replaceFromLast } from "../common/utils/string.js";
-import { clear } from "../plugins/clear/index.js";
+import { clear, clearAtEnd } from "../plugins/clear/index.js";
 import { renameBundleStatsReport } from "../plugins/rename-bundle-stats-report/index.js";
 
 const ROLLUP_WATCH = process.env.ROLLUP_WATCH === "true";
@@ -358,15 +358,16 @@ function setGenTypes(plugins) {
 /**
  * 插入清空插件
  *
+ * @param {boolean} isAfter
  * @param {import("rollup").RollupOptions[]} configs
  * @param {string[]} paths
  * @param {string[]} [pathsIfEmpty]
  */
-function addClearPlugin(configs, paths, pathsIfEmpty) {
+function addClearPlugin(isAfter, configs, paths, pathsIfEmpty) {
     const firstConfig = configs[0];
     // @ts-ignore
     firstConfig.plugins.unshift(
-        clear({
+        (isAfter ? clear : clearAtEnd)({
             targets: paths,
             targetsIfEmpty: pathsIfEmpty,
         }),
@@ -553,7 +554,7 @@ export function tsConfigFromExports(opts) {
 
     // 清空输出目录
     if (!ROLLUP_WATCH && cleanPaths.length > 0) {
-        addClearPlugin(configs, cleanPaths);
+        addClearPlugin(false, configs, cleanPaths);
     }
 
     return configs;
@@ -674,6 +675,7 @@ export function tsSizeReportConfigFromExports(opts) {
     // 清空输出目录
     if (!ROLLUP_WATCH && cleanPaths.length > 0) {
         addClearPlugin(
+            true,
             configs,
             cleanPaths.map(v => join(TEMP_RELATIVE_PATH, v)),
             [TEMP_RELATIVE_PATH],
