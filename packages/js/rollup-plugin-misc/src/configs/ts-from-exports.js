@@ -121,7 +121,7 @@ function getCommonThings(opts) {
         /**
          * 经过处理的 `external` 列表
          */
-        external: (autoExternal ? getAutoExternal(packageJson, external) : external ?? []).filter(v => !bundled.some(v2 => v2 === v)),
+        external: (autoExternal ? getAutoExternal(packageJson, external) : external ?? []).filter(v => !bundled.some(v2 => v2.toString() === v.toString())),
 
         /**
          * 传入该属性控制是否强制生成或不生成 `d.ts` 文件，默认 `undefined` 自动判断
