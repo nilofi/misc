@@ -37,27 +37,23 @@ export function getAutoExternal(packageJson, base = []) {
         return json.private;
     }
 
-    if (packageJson.private) {
-        base.push(/node_modules/);
-    } else {
-        const keys = [
-            // prettier-keep
-            "dependencies",
-            "peerDependencies",
-            "optionalDependencies",
-        ];
+    const keys = [
+        // prettier-keep
+        "dependencies",
+        "peerDependencies",
+        "optionalDependencies",
+    ];
 
-        keys.forEach(key => {
-            const deps = packageJson[key];
-            if (deps) {
-                Object.keys(deps)
-                    .filter(v => !isPrivate(v) || key === "peerDependencies")
-                    .forEach(v => {
-                        base.push(getExternalRegexp(v));
-                    });
-            }
-        });
-    }
+    keys.forEach(key => {
+        const deps = packageJson[key];
+        if (deps) {
+            Object.keys(deps)
+                .filter(v => (packageJson.private ? true : !isPrivate(v) || key === "peerDependencies"))
+                .forEach(v => {
+                    base.push(getExternalRegexp(v));
+                });
+        }
+    });
 
     return base;
 }
