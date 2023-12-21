@@ -316,6 +316,16 @@ function baseConfig(info) {
  * @param {import("rollup").RollupOptions["external"]} external
  */
 function bundleTypesConfig(input, dist, target, external) {
+    // 部分无类型文件的包会导致捆绑出错，需进行排除
+    // @ts-expect-error
+    external = [...external];
+    external.push(
+        ...[
+            // prettier-keep
+            "core-js",
+        ].map(v => getExternalRegexp(v)),
+    );
+
     return defineConfig({
         input: input,
         output: {
