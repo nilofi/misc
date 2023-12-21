@@ -259,6 +259,34 @@ function treeshakeConfig() {
 }
 
 /**
+ * 某些警告应该被得到重视
+ *
+ * @returns {import("rollup").LogHandlerWithDefault}
+ */
+function warnToErrorLog() {
+    const isSkipLogCode = code => {
+        return [
+            // prettier-keep
+            "EMPTY_BUNDLE",
+        ].includes(code);
+    };
+    const isSkipLogMessage = msg => {
+        return [
+            // prettier-keep
+            "'preventAssignment' currently defaults to false",
+            "TS5110: Option 'module' must be set to 'NodeNext' when option 'moduleResolution' is set to 'NodeNext'.",
+        ].includes(msg);
+    };
+    return (level, log, handler) => {
+        if (level === "warn" && !isSkipLogCode(log.code) && !isSkipLogMessage(log.message)) {
+            handler("error", log);
+        } else {
+            handler(level, log);
+        }
+    };
+}
+
+/**
  * 基础配置
  *
  * @param {BuildInfo} info
@@ -276,6 +304,7 @@ function baseConfig(info) {
             treeshake: treeshakeConfig(),
             preserveSymlinks: true,
             plugins: [],
+            onLog: warnToErrorLog(),
         }),
         plugins: {
             /**
@@ -356,6 +385,7 @@ function bundleTypesConfig(input, dist, target, external) {
                 respectExternal: true,
             }),
         ],
+        onLog: warnToErrorLog(),
     });
 }
 
