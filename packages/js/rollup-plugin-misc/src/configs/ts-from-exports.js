@@ -275,7 +275,7 @@ function warnToErrorLog() {
             // prettier-keep
             "'preventAssignment' currently defaults to false",
             "TS5110: Option 'module' must be set to 'NodeNext' when option 'moduleResolution' is set to 'NodeNext'.",
-        ].includes(msg);
+        ].find(v => msg.includes(v));
     };
     return (level, log, handler) => {
         if (level === "warn" && !isSkipLogCode(log.code) && !isSkipLogMessage(log.message)) {
