@@ -21,6 +21,7 @@ const ROLLUP_WATCH = process.env.ROLLUP_WATCH === "true";
  * @typedef Options
  *
  * @property {string[]} [clean] 打包前清空路径列表
+ * @property {import("@rollup/plugin-node-resolve").RollupNodeResolveOptions["dedupe"]} [dedupe] 强制将指定模块解析到根 `node_modules`，有助于防止多次捆绑同一包
  * @property {(string | RegExp)[]} [external] 不捆绑的包列表
  * @property {(string | RegExp)[]} [bundled] 强制捆绑的包列表，即使在 `external` 列表中也会强制捆绑
  * @property {boolean} [autoExternal] 根据 {@link getAutoExternal} 策略自动生成 `external` 列表，如果已经传入了 `external` 字段，则会与其合并，默认 `true`
@@ -122,6 +123,11 @@ function getCommonThings(opts) {
          * 经过处理的 `external` 列表
          */
         external: (autoExternal ? getAutoExternal(packageJson, external) : external ?? []).filter(v => !bundled.some(v2 => v2.toString() === v.toString())),
+
+        /**
+         * 强制将指定模块解析到根 `node_modules`，有助于防止多次捆绑同一包
+         */
+        dedupe: opts.dedupe,
 
         /**
          * 传入该属性控制是否强制生成或不生成 `d.ts` 文件，默认 `undefined` 自动判断
@@ -287,6 +293,12 @@ function baseConfig(info) {
             replace: {
                 delimiters: ["", ""],
             },
+            /**
+             * @type {import("@rollup/plugin-node-resolve").RollupNodeResolveOptions}
+             */
+            nodeResolve: {
+                exportConditions: [info.target],
+            },
         },
         applyPlugins() {
             const plugins = this.plugins;
@@ -299,9 +311,7 @@ function baseConfig(info) {
                 // @ts-ignore
                 commonjs(),
                 // @ts-ignore
-                nodeResolve({
-                    exportConditions: [info.target],
-                }),
+                nodeResolve(plugins.nodeResolve),
             );
         },
     };
@@ -503,6 +513,7 @@ export function tsConfigFromExports(opts) {
         isDuplicate,
         exports,
         external,
+        dedupe,
         forceGenTypes,
         bundleTypes,
         cleanPaths,
@@ -538,6 +549,11 @@ export function tsConfigFromExports(opts) {
             // 排除包
             if (external) {
                 config.external = external;
+            }
+
+            // 强制包解析到根目录
+            if (dedupe) {
+                plugins.nodeResolve.dedupe = dedupe;
             }
 
             // 当有宏替换配置时
@@ -594,6 +610,7 @@ export function tsSizeReportConfigFromExports(opts) {
         isDuplicate,
         exports,
         external,
+        dedupe,
         cleanPaths,
         forceGenTypes,
     } = getCommonThings(opts);
@@ -634,6 +651,11 @@ export function tsSizeReportConfigFromExports(opts) {
             // 排除包
             if (external) {
                 config.external = external;
+            }
+
+            // 强制包解析到根目录
+            if (dedupe) {
+                plugins.nodeResolve.dedupe = dedupe;
             }
 
             // 当有宏替换配置时
