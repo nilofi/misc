@@ -358,8 +358,9 @@ function baseConfig(info) {
  * @param {string} dist
  * @param {string} target
  * @param {import("rollup").RollupOptions["external"]} external
+ * @param {import("@rollup/plugin-node-resolve").RollupNodeResolveOptions["dedupe"]} dedupe
  */
-function bundleTypesConfig(input, dist, target, external) {
+function bundleTypesConfig(input, dist, target, external, dedupe) {
     // 部分无类型文件的包会导致捆绑出错，需进行排除
     // @ts-expect-error
     external = [...external];
@@ -385,6 +386,7 @@ function bundleTypesConfig(input, dist, target, external) {
             // @ts-ignore
             nodeResolve({
                 exportConditions: [target, "types"],
+                dedupe,
             }),
             dts({
                 respectExternal: true,
@@ -615,7 +617,7 @@ export function tsConfigFromExports(opts) {
                         const inputFile = toBundleInputFileName(key);
                         const distFile = opts.toBundleDistFileName === "default" ? toBundleDistFileName(inputFile) : opts.toBundleDistFileName ? opts.toBundleDistFileName(inputFile) : inputFile;
                         if (!isDuplicate(distFile)) {
-                            const config = bundleTypesConfig(inputFile, distFile, target, external);
+                            const config = bundleTypesConfig(inputFile, distFile, target, external, dedupe);
                             configs.push(config);
                         }
                     }
