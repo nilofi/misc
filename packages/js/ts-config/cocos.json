@@ -1,0 +1,14 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "extends": [
+        "./base.json",
+    ],
+    "compilerOptions": {
+        // NOTE 该字段仅在 node16、nodenext 和 bundler 选项下有效，Cocos 是 node
+        // "customConditions": [
+        //     "cocos",
+        // ]
+        // TODO resolvePackageJsonExports
+        // TODO resolvePackageJsonImports
+    },
+}
