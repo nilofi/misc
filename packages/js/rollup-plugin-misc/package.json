@@ -34,7 +34,7 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.5",
     "@xenon.js/studio-misc": "workspace:^",
-    "rollup-plugin-bundle-stats": "^4.8.3",
+    "rollup-plugin-bundle-stats": "^4.8.4",
     "rollup-plugin-dts": "^6.1.0",
     "tslib": "^2.6.2",
     "typescript": "5.2.2"
