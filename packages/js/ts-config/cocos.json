@@ -4,11 +4,14 @@
         "./base.json",
     ],
     "compilerOptions": {
-        // NOTE 该字段仅在 node16、nodenext 和 bundler 选项下有效，Cocos 是 node
-        // "customConditions": [
-        //     "cocos",
-        // ]
-        // TODO resolvePackageJsonExports
-        // TODO resolvePackageJsonImports
+        "target": "ES2015",
+        "module": "ES2015",
+        // NOTE 截止 3.8.2，Cocos 默认的配置是 Node，但其行为更像是 Bundler，所以在这改为 Bundler
+        "moduleResolution": "Bundler",
+        "customConditions": [
+            "cocos",
+        ],
+        "experimentalDecorators": true,
+        "noEmit": true,
     },
 }

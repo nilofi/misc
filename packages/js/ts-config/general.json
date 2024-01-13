@@ -7,6 +7,5 @@
         "target": "ESNext",
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
-        "declaration": true,
     },
 }
