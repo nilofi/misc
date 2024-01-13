@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/eslint-config",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "ESLint config used by the Xenon Studio.",
   "keywords": [
     "xenon",
@@ -24,7 +24,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "tsc index.js --allowJs --outDir ./dist/cjs --module commonjs --skipLibCheck",
+    "build": "esbuild index.js --bundle --allow-overwrite --platform=node --packages=external --outfile=index.cjs",
     "dev": "pnpm build --watch",
     "clean": "rimraf \"./dist\""
   },

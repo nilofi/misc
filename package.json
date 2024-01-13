@@ -19,6 +19,7 @@
     "@xenon.js/prettier-config": "workspace:^",
     "@xenon.js/ts-config": "workspace:^",
     "cross-env": "^7.0.3",
+    "esbuild": "^0.19.11",
     "husky": "^8.0.3",
     "only-allow": "^1.2.1",
     "prettier": "3.0.3",
