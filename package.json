@@ -4,7 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "clean": "turbo run clean",
+    "clean": "turbo run clean && rimraf ./.turbo && rimraf ./node_modules/.cache",
     "prepare": "husky install",
     "preinstall": "npx only-allow pnpm"
   },
