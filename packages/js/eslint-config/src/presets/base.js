@@ -15,6 +15,7 @@ import { eslintTypeScriptParserConfig } from "../configs/typescript/parser.js";
  * @property {boolean} [monorepo] 是否为 Monorepo，默认 `false`
  * @property {string[]} [ignorePackages] 生成 Monorepo 默认配置时，要忽略的包
  * @property {string[]} [dirs] 需检查的文件夹路径，支持 glob
+ * @property {any} [project] typescript-eslint 插件的 parserOptions.project 选项
  * @property {string[]} [ignores] 需全局忽略的文件夹路径，支持 glob
  */
 
@@ -93,9 +94,17 @@ export function baseConfig(opts) {
         }
     }
 
-    // 兼容 Monorepo
-    if (opts.monorepo) {
-        eslintTypeScriptParserConfig.languageOptions.parserOptions.project = ["./**/tsconfig.json"];
+    // project
+    const parserOptions = eslintTypeScriptParserConfig.languageOptions.parserOptions;
+    if (opts.project != null) {
+        parserOptions.project = opts.project;
+    } else {
+        // 兼容 Monorepo
+        if (opts.monorepo) {
+            parserOptions.project = ["./**/tsconfig.json"];
+        } else {
+            parserOptions.project = true;
+        }
     }
 
     /**
