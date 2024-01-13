@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/eslint-config",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "ESLint config used by the Xenon Studio.",
   "keywords": [
     "xenon",
@@ -23,6 +23,9 @@
   },
   "main": "index.js",
   "type": "module",
+  "files": [
+    "**/*"
+  ],
   "scripts": {
     "build": "esbuild index.js --bundle --allow-overwrite --platform=node --packages=external --outfile=index.cjs",
     "dev": "pnpm build --watch",
