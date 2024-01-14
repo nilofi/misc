@@ -11,7 +11,8 @@
         "customConditions": [
             "cocos",
         ],
-        "experimentalDecorators": true,
         "noEmit": true,
+        "experimentalDecorators": true,
+        "allowImportingTsExtensions": true,
     },
 }
