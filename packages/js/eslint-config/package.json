@@ -25,7 +25,7 @@
   "type": "module",
   "scripts": {
     "build": "esbuild index.js --bundle --allow-overwrite --platform=node --external:eslint --external:@eslint/* --external:@eslint-community/* --external:@typescript-eslint/* --outfile=index.cjs",
-    "dev": "pnpm build --watch",
+    "dev": "pnpm run build --watch",
     "clean": "rimraf \"./dist\""
   },
   "dependencies": {
