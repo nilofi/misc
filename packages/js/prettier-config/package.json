@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/prettier-config",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Prettier config used by the Xenon Studio.",
   "keywords": [
     "xenon",
@@ -26,7 +26,7 @@
     "@types/node": "^20"
   },
   "peerDependencies": {
-    "prettier": "^3.0.3"
+    "prettier": "^3.2.5"
   },
   "publishConfig": {
     "access": "public"
