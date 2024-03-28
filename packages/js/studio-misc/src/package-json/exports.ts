@@ -31,7 +31,9 @@ export interface PackageJsonExportsOutput {
  *
  * 无条件导出会被处理为 "default" 条件导出的对象
  */
-export function normalize(exports: PackageJsonExportsInput): PackageJsonExportsOutput {
+export function normalize(
+    exports: PackageJsonExportsInput,
+): PackageJsonExportsOutput {
     const exportsKeys = Object.keys(exports);
 
     const result: PackageJsonExportsOutput = {};

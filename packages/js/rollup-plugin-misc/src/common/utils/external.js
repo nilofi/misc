@@ -48,7 +48,11 @@ export function getAutoExternal(packageJson, base = []) {
         const deps = packageJson[key];
         if (deps) {
             Object.keys(deps)
-                .filter(v => (packageJson.private ? true : !isPrivate(v) || key === "peerDependencies"))
+                .filter(v =>
+                    packageJson.private
+                        ? true
+                        : !isPrivate(v) || key === "peerDependencies",
+                )
                 .forEach(v => {
                     base.push(getExternalRegexp(v));
                 });

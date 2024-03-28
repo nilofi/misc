@@ -10,7 +10,10 @@ import { cwd } from "process";
 import { defineConfig } from "rollup";
 import { bundleStats } from "rollup-plugin-bundle-stats";
 import dts from "rollup-plugin-dts";
-import { getAutoExternal, getExternalRegexp } from "../common/utils/external.js";
+import {
+    getAutoExternal,
+    getExternalRegexp,
+} from "../common/utils/external.js";
 import { replaceFromLast } from "../common/utils/string.js";
 import { clear, clearAtEnd } from "../plugins/clear/index.js";
 import { renameBundleStatsReport } from "../plugins/rename-bundle-stats-report/index.js";
@@ -65,7 +68,9 @@ function getCommonThings(opts) {
     /**
      * @type {{name:string,private?:boolean,exports:PackageJsonExportsInput,dependencies?:Record<string,string>,xenon?:any}}
      */
-    const packageJson = JSON.parse(readFileSync(join(cwd(), "./package.json"), { encoding: "utf-8" }));
+    const packageJson = JSON.parse(
+        readFileSync(join(cwd(), "./package.json"), { encoding: "utf-8" }),
+    );
 
     let {
         // prettier-keep
@@ -122,7 +127,10 @@ function getCommonThings(opts) {
         /**
          * 经过处理的 `external` 列表
          */
-        external: (autoExternal ? getAutoExternal(packageJson, external) : external ?? []).filter(v => !bundled.some(v2 => v2.toString() === v.toString())),
+        external: (autoExternal
+            ? getAutoExternal(packageJson, external)
+            : external ?? []
+        ).filter(v => !bundled.some(v2 => v2.toString() === v.toString())),
 
         /**
          * 强制将指定模块解析到根 `node_modules`，有助于防止多次捆绑同一包
@@ -132,7 +140,8 @@ function getCommonThings(opts) {
         /**
          * 传入该属性控制是否强制生成或不生成 `d.ts` 文件，默认 `undefined` 自动判断
          */
-        forceGenTypes: packageJson.xenon?.build?.forceGenTypes ?? opts.forceGenTypes,
+        forceGenTypes:
+            packageJson.xenon?.build?.forceGenTypes ?? opts.forceGenTypes,
 
         /**
          * 是否捆绑 `d.ts` 文件，默认 `false`
@@ -142,7 +151,9 @@ function getCommonThings(opts) {
         /**
          * 打包前清空路径列表
          */
-        cleanPaths: (packageJson.xenon?.build?.clean ?? []).concat(opts.clean ?? []),
+        cleanPaths: (packageJson.xenon?.build?.clean ?? []).concat(
+            opts.clean ?? [],
+        ),
     };
 }
 
@@ -170,7 +181,12 @@ function toBuildInfos(exports, forceGenTypes) {
         const infoMap = infos.get(target);
 
         if (!infoMap.has(format)) {
-            infoMap.set(format, { input: {}, target, format, typesInput: null });
+            infoMap.set(format, {
+                input: {},
+                target,
+                format,
+                typesInput: null,
+            });
         }
         const info = infoMap.get(format);
 
@@ -194,7 +210,9 @@ function toBuildInfos(exports, forceGenTypes) {
         for (const target in targets) {
             const typesObject = targets[target];
             const hasTypes = typesObject.types != null;
-            const typesSourceFile = hasTypes ? getTypesSourceFile(typesObject.types) : null;
+            const typesSourceFile = hasTypes
+                ? getTypesSourceFile(typesObject.types)
+                : null;
             let isSourceFileFind = false;
 
             for (const type in typesObject) {
@@ -207,9 +225,15 @@ function toBuildInfos(exports, forceGenTypes) {
                     isSourceFileFind = true;
                 }
 
-                const genTypes = (isSourceFileFind && forceGenTypes !== false) || forceGenTypes;
+                const genTypes =
+                    (isSourceFileFind && forceGenTypes !== false) ||
+                    forceGenTypes;
 
-                addSubPath(target, type, { key: distFile, input: inputFile, typesInput: genTypes ? typesSourceFile ?? "" : null });
+                addSubPath(target, type, {
+                    key: distFile,
+                    input: inputFile,
+                    typesInput: genTypes ? typesSourceFile ?? "" : null,
+                });
             }
 
             if (hasTypes && !isSourceFileFind && forceGenTypes == undefined) {
@@ -283,7 +307,12 @@ function warnToErrorLog() {
         ].includes(name);
     };
     return (level, log, handler) => {
-        if (level === "warn" && !isSkipLogCode(log.code) && !isSkipLogMessage(log.message) && !isSkipLogPlugin(log.plugin)) {
+        if (
+            level === "warn" &&
+            !isSkipLogCode(log.code) &&
+            !isSkipLogMessage(log.message) &&
+            !isSkipLogPlugin(log.plugin)
+        ) {
             handler("error", log);
         } else {
             handler(level, log);
@@ -572,7 +601,9 @@ export function tsConfigFromExports(opts) {
             // 可以处理的重复入口文件都在 addSubPath 中处理了
             // 这里有重复入口文件是错误的
             if (Object.keys(info.input).some(v => isDuplicate(v))) {
-                throw new Error("different target or different format can't have the same entry file.");
+                throw new Error(
+                    "different target or different format can't have the same entry file.",
+                );
             }
 
             const data = baseConfig(info);
@@ -615,9 +646,20 @@ export function tsConfigFromExports(opts) {
                 if (info.typesInput != null) {
                     for (const key in info.input) {
                         const inputFile = toBundleInputFileName(key);
-                        const distFile = opts.toBundleDistFileName === "default" ? toBundleDistFileName(inputFile) : opts.toBundleDistFileName ? opts.toBundleDistFileName(inputFile) : inputFile;
+                        const distFile =
+                            opts.toBundleDistFileName === "default"
+                                ? toBundleDistFileName(inputFile)
+                                : opts.toBundleDistFileName
+                                  ? opts.toBundleDistFileName(inputFile)
+                                  : inputFile;
                         if (!isDuplicate(distFile)) {
-                            const config = bundleTypesConfig(inputFile, distFile, target, external, dedupe);
+                            const config = bundleTypesConfig(
+                                inputFile,
+                                distFile,
+                                target,
+                                external,
+                                dedupe,
+                            );
                             configs.push(config);
                         }
                     }
@@ -674,7 +716,9 @@ export function tsSizeReportConfigFromExports(opts) {
             // 可以处理的重复入口文件都在 addSubPath 中处理了
             // 这里有重复入口文件是错误的
             if (Object.keys(info.input).some(v => isDuplicate(v))) {
-                throw new Error("different target or different format can't have the same entry file.");
+                throw new Error(
+                    "different target or different format can't have the same entry file.",
+                );
             }
 
             const data = baseConfig(info);
@@ -704,9 +748,14 @@ export function tsSizeReportConfigFromExports(opts) {
             // @ts-ignore
             config.output.dir = join(TEMP_RELATIVE_PATH, "dist");
 
-            const name = packageJson.name.replaceAll("@", "").replaceAll("/", "-");
+            const name = packageJson.name
+                .replaceAll("@", "")
+                .replaceAll("/", "-");
             const baselineDir = join(reportDir, "baselines");
-            const baselineFile = join(baselineDir, `${name}.${info.target}.${info.format}.baseline.json`);
+            const baselineFile = join(
+                baselineDir,
+                `${name}.${info.target}.${info.format}.baseline.json`,
+            );
 
             // @ts-ignore
             config.plugins.push(
@@ -731,7 +780,10 @@ export function tsSizeReportConfigFromExports(opts) {
                         baseline: true,
                         baselineFilepath: baselineFile,
                         // @ts-ignore
-                        outDir: relative(join(cwd(), config.output.dir), reportDir),
+                        outDir: relative(
+                            join(cwd(), config.output.dir),
+                            reportDir,
+                        ),
                         html: false,
                         json: false,
                     }),
@@ -742,7 +794,10 @@ export function tsSizeReportConfigFromExports(opts) {
             config.plugins.push(
                 renameBundleStatsReport({
                     source: join(reportDir, "bundle-stats.html"),
-                    dist: join(reportDir, `${name}.${info.target}.${info.format}.bundle-stats.html`),
+                    dist: join(
+                        reportDir,
+                        `${name}.${info.target}.${info.format}.bundle-stats.html`,
+                    ),
                 }),
             );
 

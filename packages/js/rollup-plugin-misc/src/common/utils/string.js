@@ -10,5 +10,7 @@ export function replaceFromLast(str, search, replace) {
     if (index === -1) {
         return str;
     }
-    return str.substring(0, index) + replace + str.substring(index + search.length);
+    return (
+        str.substring(0, index) + replace + str.substring(index + search.length)
+    );
 }

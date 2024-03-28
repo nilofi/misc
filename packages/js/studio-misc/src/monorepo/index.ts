@@ -30,7 +30,9 @@ export class MonorepoInfo {
     /**
      * Monorepo 工作区声明文件对象
      */
-    readonly info: { packages: string[] } = parse(readFileSync(this.filePath, { encoding: "utf-8" }));
+    readonly info: { packages: string[] } = parse(
+        readFileSync(this.filePath, { encoding: "utf-8" }),
+    );
 
     /**
      * Monorepo 工作区根目录（绝对路径）
@@ -47,17 +49,28 @@ export class MonorepoInfo {
 
         // 收集所有包信息
         for (const globPath of globs) {
-            const packages = glob.sync(posix.join(globPath, "/"), { cwd: this.rootPath });
+            const packages = glob.sync(posix.join(globPath, "/"), {
+                cwd: this.rootPath,
+            });
             console.log(packages);
             for (const packagePath of packages) {
                 const packageJsonPath = join(packagePath, "package.json");
-                const packageJsonAbsolutePath = resolve(this.rootPath, packageJsonPath);
+                const packageJsonAbsolutePath = resolve(
+                    this.rootPath,
+                    packageJsonPath,
+                );
                 try {
                     statSync(packageJsonAbsolutePath);
-                    const packageJson = JSON.parse(readFileSync(packageJsonAbsolutePath, { encoding: "utf-8" }));
+                    const packageJson = JSON.parse(
+                        readFileSync(packageJsonAbsolutePath, {
+                            encoding: "utf-8",
+                        }),
+                    );
                     this.packageInfos.set(packageJson.name, {
                         name: packageJson.name,
-                        alias: (<string>packageJson.name).replace("@", "").replaceAll("/", "-"),
+                        alias: (<string>packageJson.name)
+                            .replace("@", "")
+                            .replaceAll("/", "-"),
                         path: packagePath,
                         absolutePath: join(this.rootPath, packagePath),
                         json: packageJson,

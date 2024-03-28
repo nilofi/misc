@@ -26,15 +26,22 @@ export function redirect(opts) {
             // 解析出绝对路径并判断文件是否存在
             const targetFilePath = `${dir}/${name}.${opts.suffix}.ts`;
             const targetSource = `${dir}/${name}.${opts.suffix}${ext}`;
-            const targetFileAbsPath = resolve(dirname(importer ?? ""), targetFilePath);
+            const targetFileAbsPath = resolve(
+                dirname(importer ?? ""),
+                targetFilePath,
+            );
             if (!existsSync(targetFileAbsPath)) return null;
 
-            // 自身导入不需要重定向
+            // code.nodejs.ts -> code.ts 不需要重定向
             if (targetFileAbsPath === importer) return null;
 
             console.log("redirect:", source, "=>", targetSource);
 
-            return this.resolve(targetSource, importer, Object.assign({ skipSelf: true }, options)).then(resolved => resolved || { id: targetSource });
+            return this.resolve(
+                targetSource,
+                importer,
+                Object.assign({ skipSelf: true }, options),
+            ).then(resolved => resolved || { id: targetSource });
         },
     };
 }
