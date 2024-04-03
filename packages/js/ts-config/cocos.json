@@ -9,10 +9,6 @@
         "module": "ESNext",
         // NOTE 截止 3.8.2，Cocos 默认的配置是 Node，但其行为更像是 Bundler，所以在这改为 Bundler
         "moduleResolution": "Bundler",
-        "customConditions": [
-            "cocos",
-            "browser"
-        ],
         "noEmit": true,
         "experimentalDecorators": true,
         "allowImportingTsExtensions": true,
