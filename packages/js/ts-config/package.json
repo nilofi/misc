@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/ts-config",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "TypeScript config used by the Xenon Studio.",
   "keywords": [
     "xenon",
