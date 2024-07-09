@@ -16,4 +16,4 @@ To get started contributing to the project, see the [Contributing Guide](./CONTR
 
 ## License
 
-[MIT @ SmallMain](../LICENSE)
+[MIT @ SmallMain](./LICENSE)

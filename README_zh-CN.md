@@ -27,4 +27,4 @@
 
 ## 许可证
 
-[MIT @ SmallMain](../LICENSE)
+[MIT @ SmallMain](./LICENSE)

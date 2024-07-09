@@ -46,4 +46,4 @@ npm install @xenon.types/cocos-creator@3.8.0
 
 ## 许可证
 
-[MIT @ SmallMain](../LICENSE)
+[MIT @ SmallMain](./LICENSE)
