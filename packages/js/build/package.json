@@ -1,0 +1,61 @@
+{
+  "name": "@xenon.js/build",
+  "version": "0.0.1",
+  "description": "A modern build tool out of the box.",
+  "keywords": [
+    "xenon"
+  ],
+  "homepage": "https://smallmain.com/",
+  "bugs": {
+    "url": "https://github.com/xenon-dev-studio/misc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "SmallMain",
+    "email": "smallmain@outlook.com",
+    "url": "https://www.smallmain.com/"
+  },
+  "funding": "https://smallmain.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xenon-dev-studio/misc/tree/master/packages/js/build"
+  },
+  "bin": {
+    "xe-build": "./dist/cli.js"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README_zh-CN.md"
+  ],
+  "scripts": {
+    "start": "npx tsx ./src/cli.ts",
+    "build": "tsc",
+    "dev": "tsc -w",
+    "clean": "rimraf \"./dist\" && rimraf \"./temp\""
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/node": "^20"
+  },
+  "dependencies": {
+    "@commander-js/extra-typings": "^12.1.0",
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "commander": "^12.1.0",
+    "rollup": "^4.18.1",
+    "tslib": "^2.6.3",
+    "typescript": "5.5.3",
+    "typescript-paths": "^1.5.1",
+    "typescript-transform-paths": "^3.4.7"
+  }
+}

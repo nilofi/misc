@@ -5,12 +5,12 @@
 			"path": ".."
 		},
 		{
-			"name": "@xenon.js/studio-misc",
-			"path": "../packages/js/studio-misc"
+			"name": "build",
+			"path": "../packages/js/build"
 		},
 		{
-			"name": "rollup-plugin-misc",
-			"path": "../packages/js/rollup-plugin-misc"
+			"name": "studio-misc",
+			"path": "../packages/js/studio-misc"
 		},
 		{
 			"name": "ts-config",

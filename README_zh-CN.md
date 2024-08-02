@@ -13,7 +13,7 @@
 当前仓库内维护着以下包：
 
 - [@xenon.js/studio-misc](./packages/js/studio-misc)
-- [@xenon.js/rollup-plugin-misc](./packages/js/rollup-plugin-misc)
+- [@xenon.js/build](./packages/js/build)
 - [@xenon.js/ts-config](./packages/js/ts-config)
 - [@xenon.js/eslint-config](./packages/js/eslint-config)
 - [@xenon.js/prettier-config](./packages/js/prettier-config)
