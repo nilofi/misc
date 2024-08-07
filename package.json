@@ -22,7 +22,7 @@
         "prettier": "^3.3.3",
         "rimraf": "^5.0.5",
         "turbo": "^1.12.4",
-        "typescript": "^5.5.3",
+        "typescript": "^5.5.4",
         "eslint": "^9.8.0",
         "@xenon.js/configs": "workspace:^"
     }

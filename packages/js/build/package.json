@@ -55,7 +55,7 @@
     "commander": "^12.1.0",
     "rollup": "^4.18.1",
     "tslib": "^2.6.3",
-    "typescript": "^5.5.3",
+    "typescript": "^5.5.4",
     "typescript-paths": "^1.5.1",
     "typescript-transform-paths": "^3.4.7"
   }
