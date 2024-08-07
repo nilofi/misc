@@ -5,7 +5,7 @@
   </a>
 </p>
 <!-- 名字 -->
-<h1 align="center">Xenon JavaScript Build Tool</h1>
+<h1 align="center">JavaScript Build Tool</h1>
 <!-- 描述 -->
 <p align="center">一个开箱即用的现代化 JavaScript 构建工具。</p>
 <br/>

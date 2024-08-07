@@ -27,7 +27,7 @@ export interface PackageJsonExportsOutput {
  *
  * 规定只能出现两种情况：
  * 无条件导出：exports: { ".": { types: "./types/index.d.ts", import: "./index.js" } }
- * 有条件导出：exports: { ".": { nodejs: { types: "./types/index.d.ts", import: "./index.js" } } }
+ * 有条件导出：exports: { ".": { node: { types: "./types/index.d.ts", import: "./index.js" } } }
  *
  * 无条件导出会被处理为 "default" 条件导出的对象
  */

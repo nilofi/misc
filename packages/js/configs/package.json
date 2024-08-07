@@ -1,0 +1,56 @@
+{
+  "name": "@xenon.js/configs",
+  "version": "1.0.0",
+  "description": "All common configuration related to JavaScript.",
+  "keywords": [
+    "xenon",
+    "config",
+    "tsconfig",
+    "eslintconfig",
+    "prettierconfig"
+  ],
+  "homepage": "https://smallmain.com/",
+  "bugs": {
+    "url": "https://github.com/nilofi/misc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "SmallMain",
+    "email": "smallmain@outlook.com",
+    "url": "https://www.smallmain.com/"
+  },
+  "funding": "https://smallmain.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nilofi/misc/tree/master/packages/js/configs"
+  },
+  "main": "./index.js",
+  "types": "./types/index.d.ts",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "npx tsc index.js --declaration --emitDeclarationOnly --allowJs --lib dom,esnext --skipLibCheck --outDir ./types",
+    "dev": "pnpm run build --watch",
+    "clean": "rimraf \"./dist\" && rimraf \"./temp\" && rimraf \"./.turbo\""
+  },
+  "peerDependencies": {
+    "eslint": "^9.8.0",
+    "prettier": "^3.3.3",
+    "typescript": ">=4.0.0"
+  },
+  "dependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.3.0",
+    "@eslint/compat": "^1.1.1",
+    "@eslint/js": "^9.8.0",
+    "@html-eslint/eslint-plugin": "^0.25.0",
+    "@html-eslint/parser": "^0.25.0",
+    "@types/eslint": "^9.6.0",
+    "@types/eslint__js": "^8.42.3",
+    "eslint-plugin-jsdoc": "^48.11.0",
+    "eslint-plugin-n": "^17.10.1",
+    "eslint-plugin-security": "^3.0.1",
+    "typescript-eslint": "^8.0.0"
+  }
+}

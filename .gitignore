@@ -8,8 +8,8 @@
 !.vscode/launch.json
 !.vscode/settings.json
 !.vscode/extensions.json
-!.vscode/**/*.code-snippets
-!.vscode/**/*.code-workspace
+!.vscode/*.code-snippets
+!.vscode/*.code-workspace
 
 # IDE - Visual Studio
 .vs/

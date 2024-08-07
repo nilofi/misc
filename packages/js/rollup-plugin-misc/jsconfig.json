@@ -1,9 +1,0 @@
-{
-    "extends": "@xenon.js/ts-config/general.json",
-    "compilerOptions": {
-        "strict": false,
-    },
-    "include": [
-        "src/**/*"
-    ]
-}

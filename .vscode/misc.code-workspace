@@ -9,20 +9,12 @@
 			"path": "../packages/js/build"
 		},
 		{
+			"name": "configs",
+			"path": "../packages/js/configs"
+		},
+		{
 			"name": "studio-misc",
 			"path": "../packages/js/studio-misc"
-		},
-		{
-			"name": "ts-config",
-			"path": "../packages/js/ts-config"
-		},
-		{
-			"name": "eslint-config",
-			"path": "../packages/js/eslint-config"
-		},
-		{
-			"name": "prettier-config",
-			"path": "../packages/js/prettier-config"
 		},
 		{
 			"name": "@types/cocos-creator",
@@ -59,6 +51,7 @@
 	},
 	"extensions": {
 		"recommendations": [
+			"dbaeumer.vscode-eslint",
 			"esbenp.prettier-vscode",
 			"editorconfig.editorconfig"
 		]
