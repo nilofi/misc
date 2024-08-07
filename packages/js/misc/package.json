@@ -1,0 +1,53 @@
+{
+  "name": "@xenon.js/misc",
+  "version": "1.0.0",
+  "description": "A JavaScript utility library.",
+  "keywords": [
+    "xenon",
+    "misc"
+  ],
+  "homepage": "https://smallmain.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nilofi/misc/tree/master/packages/js/misc"
+  },
+  "bugs": {
+    "url": "https://github.com/nilofi/misc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "SmallMain",
+    "email": "smallmain@outlook.com",
+    "url": "https://www.smallmain.com/"
+  },
+  "funding": "https://smallmain.com/",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "xe-build",
+    "dev": "xe-build -w",
+    "clean": "rimraf \"./dist\" && rimraf \"./temp\" && rimraf \"./.turbo\"",
+    "lint": "eslint",
+    "gen-index": "pnpm run cli gen-index"
+  },
+  "exports": {},
+  "imports": {},
+  "lint-staged": {
+    "*.{js?(x),ts?(x),mts?(x),mjs?(x),cts?(x),cjs?(x)}": [
+      "eslint --config packages/js/misc/eslint.config.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^14",
+    "@xenon.js/build": "workspace:^",
+    "@xenon.js/configs": "workspace:^",
+    "cross-env": "^7.0.3",
+    "ctix": "^2.4.3",
+    "execa": "^8.0.1",
+    "fs-extra": "^11.2.0",
+    "rimraf": "^5.0.5"
+  }
+}

@@ -5,7 +5,7 @@
         "build": "turbo run build",
         "dev": "turbo run dev",
         "clean": "turbo run clean && rimraf ./.turbo && rimraf ./node_modules/.cache",
-        "prepare": "husky install",
+        "prepare": "husky",
         "preinstall": "npx only-allow pnpm"
     },
     "commitlint": {
@@ -16,14 +16,15 @@
     "devDependencies": {
         "@commitlint/cli": "^19.1.0",
         "@commitlint/config-conventional": "^19.1.0",
+        "@xenon.js/configs": "workspace:^",
         "cross-env": "^7.0.3",
+        "eslint": "^9.8.0",
         "husky": "^9.0.11",
+        "lint-staged": "^15.2.2",
         "only-allow": "^1.2.1",
         "prettier": "^3.3.3",
         "rimraf": "^5.0.5",
         "turbo": "^1.12.4",
-        "typescript": "^5.5.4",
-        "eslint": "^9.8.0",
-        "@xenon.js/configs": "workspace:^"
+        "typescript": "^5.5.4"
     }
 }
