@@ -36,7 +36,7 @@
   "imports": {},
   "lint-staged": {
     "*.{js?(x),ts?(x),mts?(x),mjs?(x),cts?(x),cjs?(x)}": [
-      "eslint --config packages/js/misc/eslint.config.js"
+      "eslint -c packages/js/misc/eslint.config.js"
     ]
   },
   "devDependencies": {
