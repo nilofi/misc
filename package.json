@@ -2,9 +2,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "turbo run build",
-        "dev": "turbo run dev",
-        "clean": "turbo run clean && rimraf ./.turbo && rimraf ./node_modules/.cache",
+        "build": "pnpm run build -r",
+        "dev": "pnpm run dev -r",
+        "clean": "pnpm run clean -r",
         "prepare": "husky",
         "preinstall": "npx only-allow pnpm"
     },
@@ -24,7 +24,6 @@
         "only-allow": "^1.2.1",
         "prettier": "^3.3.3",
         "rimraf": "^5.0.5",
-        "turbo": "^1.12.4",
         "typescript": "^5.5.4"
     }
 }

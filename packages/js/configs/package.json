@@ -33,7 +33,7 @@
   "scripts": {
     "build": "npx tsc index.js --declaration --emitDeclarationOnly --allowJs --lib dom,esnext --skipLibCheck --outDir ./types",
     "dev": "pnpm run build --watch",
-    "clean": "rimraf \"./dist\" && rimraf \"./temp\" && rimraf \"./.turbo\""
+    "clean": "rimraf \"./dist\" && rimraf \"./temp\""
   },
   "peerDependencies": {
     "eslint": "^9.8.0",

@@ -34,7 +34,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
-    "clean": "rimraf \"./dist\" && rimraf \"./temp\" && rimraf \"./.turbo\""
+    "clean": "rimraf \"./dist\" && rimraf \"./temp\""
   },
   "publishConfig": {
     "access": "public"
