@@ -75,6 +75,7 @@ export class OptionsBuilder {
             declarationMap: false,
             declarationDir: undefined,
             incremental: false,
+            tsBuildInfoFile: undefined,
         } satisfies RollupTypescriptOptions);
 
         this.plugins.set(PluginId.Constants, {
