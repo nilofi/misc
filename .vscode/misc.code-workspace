@@ -13,6 +13,10 @@
 			"path": "../packages/js/configs"
 		},
 		{
+			"name": "misc",
+			"path": "../packages/js/misc"
+		},
+		{
 			"name": "studio-misc",
 			"path": "../packages/js/studio-misc"
 		},

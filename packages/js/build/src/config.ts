@@ -1,5 +1,9 @@
 import { cwd } from "process";
 import type { RollupOptions } from "rollup";
+import type { ApiReportAddonConfig } from "./addons/api-report/config.js";
+import type { BarrelGeneratorAddonConfig } from "./addons/barrel-generator/config.js";
+import type { EntryPointsGeneratorAddonConfig } from "./addons/entry-points-generator/config.js";
+import type { ModulesGeneratorAddonConfig } from "./addons/modules-generator/config.js";
 
 export interface Config {
     /**
@@ -49,6 +53,26 @@ export interface Config {
      * 强制生成 `cocos` 版本，以解决 `cocos` 条件导出读取错误问题（总是读取 `default`）
      */
     forceCocos: boolean;
+
+    /**
+     * 自动桶文件内容生成器
+     */
+    barrel?: BarrelGeneratorAddonConfig;
+
+    /**
+     * 入口点生成器
+     */
+    entryPoint?: EntryPointsGeneratorAddonConfig;
+
+    /**
+     * 模块列表生成器
+     */
+    modules?: ModulesGeneratorAddonConfig;
+
+    /**
+     * API 报告生成器
+     */
+    apiReport?: ApiReportAddonConfig;
 }
 
 export type ConfigInput = Partial<Config> & Required<Pick<Config, never>>;
@@ -83,6 +107,10 @@ export function resolveConfig(config: ConfigInput): Config {
         forceCocos = false,
         onlyBuildConditions,
         binConditions = ["node", "import"],
+        barrel,
+        entryPoint,
+        modules,
+        apiReport,
     } = config;
 
     return {
@@ -96,5 +124,9 @@ export function resolveConfig(config: ConfigInput): Config {
         forceCocos,
         onlyBuildConditions,
         binConditions,
+        barrel,
+        entryPoint,
+        modules,
+        apiReport,
     };
 }

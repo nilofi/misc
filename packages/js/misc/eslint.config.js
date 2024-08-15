@@ -6,6 +6,7 @@ export default [
             "ctix-exclude",
             "ctix-generation-style",
             "ctix-exclude-next",
+            "ctix-declaration",
         ],
     }),
 ];

@@ -1,6 +1,11 @@
-import { join } from "path";
+import { toExtname, xfs, type PackageJson } from "@xenon.js/misc";
+import { basename, join } from "path";
 import { chdir } from "process";
 import { rollup, watch as rollupWatch, type OutputOptions } from "rollup";
+import { generateApiReport } from "./addons/api-report/generator.js";
+import { generateBarrel } from "./addons/barrel-generator/generator.js";
+import { generateEntryPoints } from "./addons/entry-points-generator/generator.js";
+import { generateModules } from "./addons/modules-generator/generator.js";
 import { genChunks } from "./builders/chunk-builder.js";
 import { OptionsBuilder } from "./builders/options-builder.js";
 import { resolveImports } from "./components/nodejs-imports.js";
@@ -16,7 +21,7 @@ import {
 
 export async function handle(
     config: Config,
-    handler: (builder: OptionsBuilder) => void,
+    handler: (builder: OptionsBuilder) => PromiseLike<void> | void,
 ) {
     const {
         project,
@@ -39,6 +44,8 @@ export async function handle(
         console.error("发生错误：", chunks.errMsg);
         return false;
     }
+
+    let first = true;
 
     for (const [key, chunk] of chunks.chunks) {
         if (onlyBuildConditions?.some(v => !chunk.conditions?.has(v))) {
@@ -84,16 +91,20 @@ export async function handle(
         }
         builder.setRedirectSuffix(suffixResult.suffix);
         builder.setGenerateDeclarationFile(chunk.dts);
-        builder.setClearDirs(cleanDirs);
+        if (first) {
+            builder.setClearDirs(cleanDirs);
+            first = false;
+        }
 
-        handler(builder);
+        await handler(builder);
     }
 
     return true;
 }
 
 export async function build(config: Config) {
-    return handle(config, async builder => {
+    await executePreBuildAddons(config);
+    const result = await handle(config, async builder => {
         try {
             const options = builder.build();
             const bundle = await rollup(options);
@@ -103,9 +114,14 @@ export async function build(config: Config) {
             console.error("rollup error:", error);
         }
     });
+    if (result) {
+        await executePostBuildAddons(config);
+    }
+    return result;
 }
 
 export async function watch(config: Config) {
+    await executePreBuildAddons(config);
     return handle(config, async builder => {
         try {
             const options = builder.build();
@@ -131,4 +147,65 @@ export async function watch(config: Config) {
             console.error("rollup error:", error);
         }
     });
+}
+
+async function executePreBuildAddons(config: Config) {
+    const { project, barrel, entryPoint, modules } = config;
+
+    if (barrel?.atBuild) {
+        await generateBarrel(
+            barrel.files.map(v => ({
+                project,
+                ...v,
+            })),
+        );
+    }
+
+    if (entryPoint?.atBuild) {
+        await generateEntryPoints({
+            packageJsonPath: join(project, "package.json"),
+            ...entryPoint,
+        });
+    }
+
+    if (modules?.atBuild) {
+        await generateModules({
+            project,
+            ...modules,
+        });
+    }
+}
+
+async function executePostBuildAddons(config: Config) {
+    const { project, apiReport, onlyBuildConditions } = config;
+    if (apiReport?.atBuild) {
+        const { output } = apiReport;
+        const json = await xfs.json<PackageJson>(join(project, "package.json"));
+        if (json?.exports) {
+            const chunks = genChunks(json.exports as string, []);
+            for (const [distDir, chunk] of chunks.chunks) {
+                if (
+                    !chunk.dts ||
+                    onlyBuildConditions?.some(v => !chunk.conditions?.has(v))
+                ) {
+                    continue;
+                }
+                for (const entry of chunk.entrys) {
+                    await xfs.create(join(output, distDir));
+                    await generateApiReport({
+                        project,
+                        file: join(
+                            output,
+                            distDir,
+                            `${basename(entry)}.api.md`,
+                        ),
+                        entryPoint: toExtname(entry, ".d.ts"),
+                        conditions: chunk.conditions
+                            ? [...chunk.conditions]
+                            : undefined,
+                    });
+                }
+            }
+        }
+    }
 }

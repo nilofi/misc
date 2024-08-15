@@ -1,7 +1,7 @@
 <!-- 名字 -->
-<h1 align="center">Xenon JavaScript Common Configs</h1>
+<h1 align="center">Xenon JavaScript Utility Library</h1>
 <!-- 描述 -->
-<p align="center">所有与 JavaScript 相关的公共配置。</p>
+<p align="center">一个 JavaScript 工具库。</p>
 <br/>
 
 阅读其它语言版本: [English](./README.md) | 简体中文

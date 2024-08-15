@@ -1,7 +1,7 @@
 <!-- 名字 -->
-<h1 align="center">Xenon JavaScript Configs</h1>
+<h1 align="center">Xenon JavaScript Utility Library</h1>
 <!-- 描述 -->
-<p align="center">All common configuration related to JavaScript.</p>
+<p align="center">A JavaScript utility library.</p>
 <br/>
 
 Read this in other languages: English | [简体中文](./README_zh-CN.md)

@@ -29,25 +29,28 @@
     "build": "xe-build",
     "dev": "xe-build -w",
     "clean": "rimraf \"./dist\" && rimraf \"./temp\"",
-    "lint": "eslint",
-    "gen-index": "pnpm run cli gen-index"
+    "lint": "eslint"
   },
-  "exports": {},
-  "imports": {},
+  "exports": {
+    ".": {
+      "types": "./dist/es/index.d.ts",
+      "import": "./dist/es/index.js",
+      "require": "./dist/cjs/index.cjs"
+    }
+  },
   "lint-staged": {
     "*.{js?(x),ts?(x),mts?(x),mjs?(x),cts?(x),cjs?(x)}": [
       "eslint -c packages/js/misc/eslint.config.js"
     ]
   },
   "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
     "@types/node": "^14",
-    "@xenon.js/build": "workspace:^",
+    "@xenon.js/build": "^1.0.0",
     "@xenon.js/configs": "workspace:^",
     "cross-env": "^7.0.3",
-    "ctix": "^2.4.3",
-    "execa": "^8.0.1",
-    "fs-extra": "^11.2.0",
     "rimraf": "^5.0.5"
+  },
+  "dependencies": {
+    "comment-json": "^4.2.5"
   }
 }
