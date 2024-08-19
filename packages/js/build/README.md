@@ -14,7 +14,7 @@ Read this in other languages: English | [简体中文](./README_zh-CN.md)
 
 ## Introduction
 
-Due to historical factors in JavaScript and the increasing complexity of modern engineering, building a modern, cross-platform JavaScript library is not simple. This tool provides developers with a quick and efficient solution to simplify this process through good presets and rich features.
+Nowadays, if you want to build a modern, cross-platform supported JavaScript library is not easy, this tool provides developers with a quick and efficient solution to simplify the process with good presets and rich features.
 
 - Good presets based on Rollup, ready to use out of the box
 - Support for TypeScript

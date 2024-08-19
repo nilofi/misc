@@ -10,8 +10,8 @@
 
 当前仓库内维护着以下包：
 
-- [@xenon.js/studio-misc](./packages/js/studio-misc)
 - [@xenon.js/build](./packages/js/build)
+- [@xenon.tools/publish](./packages/tools/publish)
 - [@xenon.js/configs](./packages/js/configs)
 - [@xenon.types/cocos-creator](./packages/types/cocos-creator)
 

@@ -17,8 +17,8 @@
 			"path": "../packages/js/misc"
 		},
 		{
-			"name": "studio-misc",
-			"path": "../packages/js/studio-misc"
+			"name": "publish",
+			"path": "../packages/tools/publish"
 		},
 		{
 			"name": "@types/cocos-creator",

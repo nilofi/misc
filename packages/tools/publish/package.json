@@ -1,0 +1,62 @@
+{
+  "name": "@xenon.tools/publish",
+  "version": "1.0.0",
+  "description": "A publishing tool.",
+  "keywords": [
+    "xenon",
+    "publish"
+  ],
+  "homepage": "https://smallmain.com/",
+  "bugs": {
+    "url": "https://github.com/nilofi/misc/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "SmallMain",
+    "email": "smallmain@outlook.com",
+    "url": "https://www.smallmain.com/"
+  },
+  "funding": "https://smallmain.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nilofi/misc/tree/master/packages/tools/publish"
+  },
+  "bin": {
+    "xe-publish": "./dist/cli.js"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README_zh-CN.md"
+  ],
+  "scripts": {
+    "start": "npx tsx ./src/cli.ts",
+    "build": "tsc",
+    "dev": "tsc -w",
+    "clean": "rimraf \"./dist\" && rimraf \"./temp\""
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/semver": "^7.5.8",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@commander-js/extra-typings": "^12.1.0",
+    "@inquirer/prompts": "^5.3.8",
+    "@xenon.js/misc": "workspace:^",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
+    "execa": "^9.3.1",
+    "octokit": "^4.0.2",
+    "semver": "^7.6.3"
+  }
+}

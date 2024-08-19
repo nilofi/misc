@@ -10,8 +10,8 @@ Read this in other languages: English | [简体中文](./README_zh-CN.md)
 
 This repository currently maintains the following packages: 
 
-- [@xenon.js/studio-misc](./packages/js/studio-misc)
 - [@xenon.js/build](./packages/js/build)
+- [@xenon.tools/publish](./packages/tools/publish)
 - [@xenon.js/configs](./packages/js/configs)
 - [@xenon.types/cocos-creator](./packages/types/cocos-creator)
 
