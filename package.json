@@ -1,29 +1,26 @@
 {
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "build": "pnpm run build -r",
-        "dev": "pnpm run dev -r",
-        "clean": "pnpm run clean -r",
-        "prepare": "husky",
-        "preinstall": "npx only-allow pnpm"
-    },
-    "commitlint": {
-        "extends": [
-            "@commitlint/config-conventional"
-        ]
-    },
-    "devDependencies": {
-        "@commitlint/cli": "^19.1.0",
-        "@commitlint/config-conventional": "^19.1.0",
-        "@xenon.js/configs": "workspace:^",
-        "cross-env": "^7.0.3",
-        "eslint": "^9.8.0",
-        "husky": "^9.0.11",
-        "lint-staged": "^15.2.2",
-        "only-allow": "^1.2.1",
-        "prettier": "^3.3.3",
-        "rimraf": "^5.0.5",
-        "typescript": "^5.5.4"
-    }
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prepare": "husky",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.1.0",
+    "@commitlint/config-conventional": "^19.1.0",
+    "@xenon.js/configs": "workspace:^",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.8.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "only-allow": "^1.2.1",
+    "prettier": "^3.3.3",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.5.4"
+  }
 }
