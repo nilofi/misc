@@ -1,4 +1,4 @@
-import { format, isAbsolute, parse, relative, sep } from "path";
+import { format, isAbsolute, parse, posix, relative, sep, win32 } from "path";
 
 /**
  * 返回是否为子级路径
@@ -32,4 +32,23 @@ export function depth(parent: string, dir: string) {
  */
 export function toExtname(path: string, ext: string) {
     return format({ ...parse(path), base: "", ext });
+}
+
+/**
+ * 返回 `./a` 而不是 `a` 的相对路径
+ */
+export function relativeDot(from: string, to: string) {
+    const relativePath = relative(from, to);
+    return relativePath === ""
+        ? `.${sep}`
+        : relativePath.startsWith("..") || relativePath.startsWith(sep)
+          ? relativePath
+          : `.${sep}${relativePath}`;
+}
+
+/**
+ * 将所有 {@link win32.sep} 替换为 {@link posix.sep}
+ */
+export function toPosix(path: string) {
+    return path.replaceAll(win32.sep, posix.sep);
 }

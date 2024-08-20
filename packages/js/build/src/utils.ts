@@ -1,11 +1,6 @@
-import { readFileSync } from "fs";
 import { format, join, parse, sep } from "path";
 import type { LogHandlerWithDefault, ModuleFormat } from "rollup";
 import type { Chunk, Chunks } from "./builders/chunk-builder.js";
-
-export function readJson<T>(file: string): T {
-    return JSON.parse(readFileSync(file, { encoding: "utf-8" }));
-}
 
 /**
  * 某些警告应该被得到重视
@@ -101,13 +96,13 @@ export function chunkToRollupInput(key: string, chunk: Chunk) {
 export function conditionsToFormat(
     conditions: Set<string> | null,
     defaultEsm: boolean,
-): ModuleFormat {
+): ModuleFormat & ("cjs" | "esm") {
     if (conditions?.has("require")) {
         return "cjs";
     } else if (conditions?.has("import")) {
-        return "es";
+        return "esm";
     } else {
-        return defaultEsm ? "es" : "cjs";
+        return defaultEsm ? "esm" : "cjs";
     }
 }
 
@@ -157,4 +152,18 @@ export function pickRedirectSuffix(
     return {
         suffix,
     };
+}
+
+export function isJsExt(ext: string) {
+    if (ext.at(0) === ".") {
+        ext = ext.slice(1);
+    }
+    return (
+        ext === "js" ||
+        ext === "mjs" ||
+        ext === "cjs" ||
+        ext === "jsx" ||
+        ext === "cjsx" ||
+        ext === "mjsx"
+    );
 }

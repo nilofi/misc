@@ -45,6 +45,7 @@ const fix = <T>(f: { default: T }) => f as T;
 export class OptionsBuilder {
     options: RollupOptions;
     plugins = new Map<PluginId, any>();
+    ext: string = "js";
 
     constructor() {
         this.options = {
@@ -60,10 +61,10 @@ export class OptionsBuilder {
                             chunkInfo.name.replace(
                                 /node_modules/g,
                                 "external",
-                            ) + ".js"
+                            ) + `.${this.ext}`
                         );
                     }
-                    return "[name].js";
+                    return `[name].${this.ext}`;
                 },
             },
             preserveSymlinks: true,
@@ -110,8 +111,26 @@ export class OptionsBuilder {
         }
     }
 
-    setOutputFormat(format: ModuleFormat) {
+    setOutputFormat(
+        format: ModuleFormat & ("cjs" | "esm"),
+        packageFormat: "module" | "commonjs" | undefined,
+        forceExts?: { esm: string; cjs: string },
+    ) {
         (<OutputOptions>this.options.output).format = format;
+
+        if (packageFormat === "module") {
+            if (format === "esm") {
+                this.ext = forceExts?.esm ?? "js";
+            } else {
+                this.ext = forceExts?.cjs ?? "cjs";
+            }
+        } else {
+            if (format === "esm") {
+                this.ext = forceExts?.esm ?? "mjs";
+            } else {
+                this.ext = forceExts?.cjs ?? "js";
+            }
+        }
     }
 
     setExternal(external: RollupOptions["external"]) {

@@ -2,7 +2,7 @@ import {
     type TBundleOptions,
     type TCreateOptions,
     type TModuleOptions,
-} from "ctix";
+} from "ctix-temp";
 
 export interface BarrelGeneratorConfig {
     /**

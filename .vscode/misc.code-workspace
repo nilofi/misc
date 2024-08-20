@@ -9,6 +9,10 @@
 			"path": "../packages/js/build"
 		},
 		{
+			"name": "ctix",
+			"path": "../packages/js/ctix"
+		},
+		{
 			"name": "configs",
 			"path": "../packages/js/configs"
 		},

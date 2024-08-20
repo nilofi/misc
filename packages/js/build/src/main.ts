@@ -5,8 +5,12 @@ import { rollup, watch as rollupWatch, type OutputOptions } from "rollup";
 import { generateApiReport } from "./addons/api-report/generator.js";
 import { generateBarrel } from "./addons/barrel-generator/generator.js";
 import { generateEntryPoints } from "./addons/entry-points-generator/generator.js";
+import { fixImportsPath } from "./addons/fix-imports-path/fixer.js";
 import { generateModules } from "./addons/modules-generator/generator.js";
-import { genChunks } from "./builders/chunk-builder.js";
+import {
+    genChunks,
+    type PackageJsonExports,
+} from "./builders/chunk-builder.js";
 import { OptionsBuilder } from "./builders/options-builder.js";
 import { resolveImports } from "./components/nodejs-imports.js";
 import type { Config } from "./config.js";
@@ -16,7 +20,6 @@ import {
     chunkToRollupInput,
     conditionsToFormat,
     pickRedirectSuffix,
-    readJson,
 } from "./utils.js";
 
 export async function handle(
@@ -29,6 +32,7 @@ export async function handle(
         redirects,
         constants,
         external,
+        forceExts,
         cleanDirs,
         forceCocos,
         onlyBuildConditions,
@@ -36,8 +40,12 @@ export async function handle(
     } = config;
 
     chdir(project);
-    const json = readJson<any>(join(project, "package.json"));
-    const chunks = genChunks(json.exports, binConditions, json.bin);
+    const json = (await xfs.json<PackageJson>(join(project, "package.json")))!;
+    const chunks = genChunks(
+        json.exports as PackageJsonExports,
+        binConditions,
+        json.bin,
+    );
     const fixeds = new Set<string>();
 
     if (chunks.errMsg) {
@@ -67,6 +75,8 @@ export async function handle(
         builder.setOutputDir(`./${chunkToDistDir(key)}`);
         builder.setOutputFormat(
             conditionsToFormat(chunk.conditions, json.type === "module"),
+            json.type,
+            forceExts,
         );
         builder.setExternal(external);
         builder.setTreeshake(treeshake);
@@ -150,7 +160,7 @@ export async function watch(config: Config) {
 }
 
 async function executePreBuildAddons(config: Config) {
-    const { project, barrel, entryPoint, modules } = config;
+    const { project, barrel, entryPoint, modules, autoFixImportsPath } = config;
 
     if (barrel?.atBuild) {
         await generateBarrel(
@@ -159,6 +169,10 @@ async function executePreBuildAddons(config: Config) {
                 ...v,
             })),
         );
+    }
+
+    if (autoFixImportsPath) {
+        await fixImportsPath(project);
     }
 
     if (entryPoint?.atBuild) {

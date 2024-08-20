@@ -35,6 +35,11 @@ export interface Config {
     external: RollupOptions["external"];
 
     /**
+     * 强制指定输出扩展名，默认根据 `package.json` 的 `type` 字段值自动设定
+     */
+    forceExts?: { esm: string; cjs: string };
+
+    /**
      * 构建常量，无论是否定义，都会将所有条件作为全大写常量名导出，可通过 `internal/constants` 导入
      */
     constants?: Record<string, unknown>;
@@ -73,6 +78,11 @@ export interface Config {
      * API 报告生成器
      */
     apiReport?: ApiReportAddonConfig;
+
+    /**
+     * 尝试自动替换 `imports` 中存在的路径，默认 `true`
+     */
+    autoFixImportsPath: boolean;
 }
 
 export type ConfigInput = Partial<Config> & Required<Pick<Config, never>>;
@@ -102,6 +112,7 @@ export function resolveConfig(config: ConfigInput): Config {
         ],
         treeshake,
         external,
+        forceExts,
         constants,
         cleanDirs = ["./dist"],
         forceCocos = false,
@@ -111,6 +122,7 @@ export function resolveConfig(config: ConfigInput): Config {
         entryPoint,
         modules,
         apiReport,
+        autoFixImportsPath = true,
     } = config;
 
     return {
@@ -119,6 +131,7 @@ export function resolveConfig(config: ConfigInput): Config {
         redirects: [],
         treeshake,
         external,
+        forceExts,
         constants,
         cleanDirs,
         forceCocos,
@@ -128,5 +141,6 @@ export function resolveConfig(config: ConfigInput): Config {
         entryPoint,
         modules,
         apiReport,
+        autoFixImportsPath,
     };
 }

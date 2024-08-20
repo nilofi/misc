@@ -1,4 +1,4 @@
-import { building, type TBundleOptions } from "ctix";
+import { building, type TBundleOptions } from "ctix-temp";
 import { basename, dirname, join } from "path";
 import type { BarrelGeneratorConfig } from "./config.js";
 

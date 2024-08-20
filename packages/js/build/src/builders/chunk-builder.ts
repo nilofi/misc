@@ -1,4 +1,5 @@
 import { extname, normalize, sep } from "path";
+import { isJsExt } from "../utils.js";
 
 /**
  * - 单入口
@@ -335,7 +336,7 @@ export function handleBinPath(
             return (
                 arr.at(0) === "dist" &&
                 arr.at(1) === "bin" &&
-                extname(arr.at(-1) ?? "") === ".js"
+                isJsExt(extname(arr.at(-1) ?? ""))
             );
         })
         .some(v => !tryAddEntry(v, new Set(conditions), out));
