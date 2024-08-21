@@ -2342,8 +2342,7 @@ function addExt(filename, ext) {
 // src/templates/templates/declarationFileTemplate.ts
 var declarationFileTemplate = `
 <%- it.declarations.forEach((declaration) => { -%>
-import <%-= it.options.quote %><%= declaration.relativePath %><%= declaration.extname.render %><%= it.options.quote -%>
-
+import <%-= it.options.quote %><%= declaration.importPath %><%= declaration.extname.render %><%= it.options.quote -%><%- if (it.options.useSemicolon) { -%><%-= ";" -%><%- } -%><%= "\\n" %>
 <%- }) %>
 `;
 
@@ -2973,10 +2972,10 @@ function getInlineDeclarationRenderData(declarations, options) {
     const renderExtname = getImportStatementExtname(options.fileExt, extname);
     const dirname = import_pathe6.default.dirname(declaration.filePath);
     const basename2 = import_pathe6.default.basename(declaration.filePath, extname);
-    const relativePath = options.output != null ? addCurrentDirPrefix(posixRelative(options.output, import_pathe6.default.join(dirname, basename2))) : (0, import_my_node_fp16.replaceSepToPosix)(`.${import_path.default.posix.sep}${import_pathe6.default.join(dirname, basename2)}`);
+    const importPath = options.output != null ? addCurrentDirPrefix(posixRelative(options.output, import_pathe6.default.join(dirname, basename2))) : (0, import_my_node_fp16.replaceSepToPosix)(`.${import_path.default.posix.sep}${import_pathe6.default.join(dirname, basename2)}`);
     return {
       ...declaration,
-      relativePath,
+      importPath,
       extname: {
         origin: extname,
         render: renderExtname
@@ -3239,7 +3238,7 @@ async function bundling(buildOptions, bundleOption) {
   const inlineDeclarationsRendered = await TemplateContainer.evaluate(
     CE_TEMPLATE_NAME.DECLARATION_FILE_TEMPLATE,
     {
-      options: { quote: bundleOption.quote },
+      options: { quote: bundleOption.quote, useSemicolon: bundleOption.useSemicolon },
       declarations: getInlineDeclarationRenderData(inlineDeclarations, bundleOption)
     }
   );

@@ -83,7 +83,8 @@
     "tsconfig-paths": "^4.2.0",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.5.0",
-    "vue": "^3.4.21"
+    "vue": "^3.4.21",
+    "ctix": "^2.6.3"
   },
   "dependencies": {
     "chalk": "^4.1.2",

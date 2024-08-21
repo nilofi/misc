@@ -732,7 +732,7 @@ declare function getAutoRenderCase(renderData: IIndexRenderData): {
 declare function getGenerationStyle(name: string): CE_GENERATION_STYLE;
 
 declare function getInlineDeclarationRenderData(declarations: ReturnType<typeof getInlineCommentedFiles>, options: SetOptional<Pick<TBundleOptions, 'output' | 'fileExt'>, 'output'>): {
-    relativePath: string;
+    importPath: string;
     extname: {
         origin: string;
         render: string;
@@ -791,7 +791,7 @@ declare class TemplateContainer {
     evaluate<T extends object>(name: string, data: T, option?: ConstructorParameters<typeof Eta>[0]): Promise<string>;
 }
 
-declare const declarationFileTemplate = "\n<%- it.declarations.forEach((declaration) => { -%>\nimport <%-= it.options.quote %><%= declaration.relativePath %><%= declaration.extname.render %><%= it.options.quote -%>\n\n<%- }) %>\n";
+declare const declarationFileTemplate = "\n<%- it.declarations.forEach((declaration) => { -%>\nimport <%-= it.options.quote %><%= declaration.importPath %><%= declaration.extname.render %><%= it.options.quote -%><%- if (it.options.useSemicolon) { -%><%-= \";\" -%><%- } -%><%= \"\\n\" %>\n<%- }) %>\n";
 
 declare const defaultAliasNamedDestructiveDefaultTemplate = "\n<%- if (it.statement.default != null && it.statement.named.length > 0) { -%>\n\n  export { <%= it.statement.default.isPureType ? 'type ' : '' %>default as <%= it.statement.default.identifier.alias %>, <%= it.statement.named.map((named) => (named.isPureType ? 'type ' + named.identifier.name : named.identifier.name)).join(', ') %> } from<%= \" \" %>\n  <%-= it.options.quote %><%= it.statement.importPath %><%= it.statement.extname.render %><%= it.options.quote -%>\n  <%- if (it.options.useSemicolon) { -%><%-= \";\" -%><%- } -%>\n\n<%- } else if (it.statement.default != null) { -%>\n\n  export { <%= it.statement.default.isPureType ? 'type ' : '' %>default as <%= it.statement.default.identifier.alias %> } from<%= \" \" %>\n  <%-= it.options.quote %><%= it.statement.importPath %><%= it.statement.extname.render %><%= it.options.quote %>\n  <%- if (it.options.useSemicolon) { -%><%-= \";\" -%><%- } -%>\n\n<% } else if (it.statement.named.length > 0) { -%>\n\n  export { <%= it.statement.named.map((named) => (named.isPureType ? 'type ' + named.identifier.name : named.identifier.name)).join(', ') %> } from<%= \" \" %>\n  <%-= it.options.quote %><%= it.statement.importPath %><%= it.statement.extname.render %><%= it.options.quote %>\n  <%- if (it.options.useSemicolon) { -%><%-= \";\" -%><%- } -%>\n\n<% } else { %>\n<% } -%>\n";
 
