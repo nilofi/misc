@@ -85,7 +85,7 @@ npx xe-build -w
 
 需注意 `bin` 配置的映射规则有所不同，会永远以 `dist/bin` 作为起点进行映射，比如 `dist/bin/xxx.js` 会映射为 `src/xxx.ts`，并且存在即会视为有多次构建。
 
-## 更多特性
+## 基础特性
 
 ### 多入口点
 
@@ -106,26 +106,19 @@ npx xe-build -w
 
 相同条件的不同子路径会被合并到一次构建中作为多个入口点，而不是作为多次独立的构建。
 
+### 生成 TypeScript 声明文件
+
+开启 `emitDeclarationFile` 选项会在同级目录生成 `.d.ts` 声明文件，默认开启。
+
+并且工具会默认开启 `autoFixDeclarationFileExt` 选项，以尝试修复 [TypeScript issue #53045](https://github.com/microsoft/TypeScript/issues/53045) 问题。
+
+以上选项可通过 [配置文件](#使用配置文件) 开启或关闭。
+
 ### 条件导出
 
 条件导出的详细介绍请参考 [Node.js 文档](https://nodejs.org/docs/latest-v20.x/api/packages.html#conditional-exports)。
 
 条件导出有几个典型的使用场景：
-
-#### 生成 TypeScript 声明文件
-
-当需要生成 `.d.ts` TypeScript 声明文件时，可以给 `exports` 中的入口点增加 `types` 条件：
-
-```json
-{
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  }
-}
-```
 
 #### 同时导出 ESM 与 CJS 模块
 
@@ -135,7 +128,6 @@ npx xe-build -w
 {
   "exports": {
     ".": {
-      "types": "./dist/es/index.d.ts",
       "import": "./dist/es/index.js",
       "require": "./dist/cjs/index.cjs"
     }
@@ -144,6 +136,22 @@ npx xe-build -w
 ```
 
 如果没有显式的 `import` 或 `require` 条件，则会根据 `package.json` 的 `type` 字段来决定输出的模块格式。
+
+**控制输出文件的扩展名**
+
+输出文件扩展名会自动根据条件与代码包的 `type` 字段决定。
+
+比如 `type: "module"` 的 `require` 条件的输出文件扩展名默认是 `.cjs`，即使你填写 `"require": "./dist/cjs/index.mjs"` 也不会输出扩展名是 `.mjs` 的文件。
+
+如果需强制指定扩展名，可在 [配置文件](#使用配置文件) 增加 `forceExts` 字段：
+
+```js
+export default {
+    forceExts: { esm: ".mjs", cjs: ".cjs" },
+};
+```
+
+你可以使用 [Are the types wrong?](https://arethetypeswrong.github.io) 网站检查你的包是否可以被正确导入。
 
 #### 根据平台导出不同入口点
 
@@ -154,24 +162,20 @@ npx xe-build -w
   "exports": {
     ".": {
       "node": {
-        "types": "./dist/node-es/index.d.ts",
         "import": "./dist/node-es/index.js",
         "require": "./dist/node-cjs/index.cjs"
       },
       "default": {
-        "types": "./dist/default-es/index.d.ts",
         "import": "./dist/default-es/index.js",
         "require": "./dist/default-cjs/index.cjs"
       }
     },
     "./sub": {
       "node": {
-        "types": "./dist/node-es/sub/index.d.ts",
         "import": "./dist/node-es/sub/index.js",
         "require": "./dist/node-cjs/sub/index.cjs"
       },
       "default": {
-        "types": "./dist/default-es/sub/index.d.ts",
         "import": "./dist/default-es/sub/index.js",
         "require": "./dist/default-cjs/sub/index.cjs"
       }
@@ -182,9 +186,9 @@ npx xe-build -w
 
 以上例子会生成四次构建任务：
 
-1. 构建条件：`node`、`import`、`types`，入口点：`.`、`./sub`
+1. 构建条件：`node`、`import`，入口点：`.`、`./sub`
 2. 构建条件：`node`、`require`，入口点：`.`、`./sub`
-3. 构建条件：`default`、`import`、`types`，入口点：`.`、`./sub`
+3. 构建条件：`default`、`import`，入口点：`.`、`./sub`
 4. 构建条件：`default`、`require`，入口点：`.`、`./sub`
 
 ### 使用构建条件常量模块
@@ -281,6 +285,14 @@ export default {
 import * as lib from "#lib.ts";
 ```
 
+默认会开启 `autoFixImportsPath` 选项，在构建前会自动将项目中所有导入路径替换为 `imports` 中存在的路径，如果该功能出现问题，可通过 [配置文件](#使用配置文件) 关闭：
+
+```js
+export default {
+    autoFixImportsPath: false,
+};
+```
+
 ### 构建可执行入口点
 
 如果你的库需要构建一个可执行入口点，你可以通过 `bin` 字段配置：
@@ -302,6 +314,107 @@ export default {
     binConditions: ["node", "import"],
 };
 ```
+
+## 更多特性
+
+### 自动入口点生成
+
+你可以创建 [配置文件](#使用配置文件) 并增加 `entryPoint` 字段配置：
+
+```js
+export default {
+    entryPoint: {
+        atBuild: true,
+        entryPoints: {
+            ".": "./src/index.ts",
+            "./polyfills": "./src/polyfills.ts",
+        },
+        conditions: ["node", "default"],
+    },
+};
+```
+
+以上配置会自动生成以下 `package.json` 内容：
+
+```json
+"exports": {
+  ".": {
+    "node": {
+      "import": "./dist/node-es/index.js",
+      "require": "./dist/node-cjs/index.cjs"
+    },
+    "default": {
+      "import": "./dist/default-es/index.js",
+      "require": "./dist/default-cjs/index.cjs"
+    }
+  },
+  "./polyfills": {
+    "node": {
+      "import": "./dist/node-es/polyfills.js",
+      "require": "./dist/node-cjs/polyfills.cjs"
+    },
+    "default": {
+      "import": "./dist/default-es/polyfills.js",
+      "require": "./dist/default-cjs/polyfills.cjs"
+    }
+  },
+}
+```
+
+### 自动桶文件生成
+
+你可以创建 [配置文件](#使用配置文件) 并增加 `barrel` 字段配置：
+
+```js
+export default {
+    barrel: {
+        atBuild: true,
+        files: [
+            {
+                file: "./src/index.ts",
+                include: ["src/**/*"],
+                exclude: [
+                    "**/*polyfills*/**",
+                    "**/*polyfills*",
+                ],
+                ctix: {},
+            },
+        ],
+    },
+};
+```
+
+以上配置会自动生成以下 `index.ts` 内容：
+
+```ts
+// created from ctix
+
+import "./internal/singleton-check.js";
+export * from "./exports/boost-utils.js";
+export * from "./exports/disposal-symbol.js";
+```
+
+在内部工具使用 [ctix](https://github.com/imjuni/ctix) 库的 `bundle mode`，你可以通过 `ctix` 字段修改任何配置。
+
+### 模块声明文件生成
+
+该功能一般用于生成一个 `modules.json` 文件，该文件记录着所有的模块信息。
+
+详情可参考 [@xenon.js](https://github.com/nilofi/xenon.js) 的使用方式。
+
+### API 报告生成
+
+你可以创建 [配置文件](#使用配置文件) 并增加 `apiReport` 字段配置：
+
+```js
+export default {
+    apiReport: {
+        atBuild: true,
+        output: "./.report/api-report",
+    },
+};
+```
+在内部，工具使用 [api-extractor](https://api-extractor.com/) 为每个入口点生成一个公开接口报告。
 
 ## 更多配置
 
@@ -346,10 +459,7 @@ npx xe-build --config ./configs/xebuild.config.js
 - 当前不支持除 `.ts` 的其它源码文件后缀。(TODO)
 - 当前不支持导出或导入子路径内含有 `*` 通配符。(TODO)
 - 当前不允许自定义源码目录 `src` 与构建输出目录 `dist`。(TODO)
-- 条件 `types` 的值必须是字符串，不能继续嵌套子条件。
-- `types` 声明文件的路径必须与源代码的路径相对应，并且只要有一个入口点需生成声明文件，那么单次构建的所有源码都会生成声明文件，因为 TypeScript 并不支持单独生成声明文件。
 - 当前只要出现除 `import`、`require`、`default` 以外的条件，则会被视为多次构建。(TODO)
-- `redirects` 为遗留选项，应使用 [条件导入](#使用子路径导入) 替代。
 
 ## 贡献
 

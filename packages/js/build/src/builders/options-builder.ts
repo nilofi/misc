@@ -118,17 +118,25 @@ export class OptionsBuilder {
     ) {
         (<OutputOptions>this.options.output).format = format;
 
-        if (packageFormat === "module") {
+        if (forceExts) {
             if (format === "esm") {
-                this.ext = forceExts?.esm ?? "js";
+                this.ext = forceExts?.esm;
             } else {
-                this.ext = forceExts?.cjs ?? "cjs";
+                this.ext = forceExts?.cjs;
             }
         } else {
-            if (format === "esm") {
-                this.ext = forceExts?.esm ?? "mjs";
+            if (packageFormat === "module") {
+                if (format === "esm") {
+                    this.ext = "js";
+                } else {
+                    this.ext = "cjs";
+                }
             } else {
-                this.ext = forceExts?.cjs ?? "js";
+                if (format === "esm") {
+                    this.ext = "mjs";
+                } else {
+                    this.ext = "js";
+                }
             }
         }
     }

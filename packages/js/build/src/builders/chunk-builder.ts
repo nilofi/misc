@@ -86,6 +86,9 @@ export type PackageJsonImports = PackageJsonExportsWithSubPaths;
 export type Chunk = {
     conditions: Set<string> | null;
     entrys: Set<string>;
+    /**
+     * @deprecated 通过 emitDeclarationFile 统一控制
+     */
     dts: boolean;
 };
 
@@ -100,9 +103,9 @@ export function genChunks(
     binConditions: string[],
     bin?: PackageJsonBin,
 ): Chunks {
-    const out = {
+    const out: Chunks = {
         chunks: new Map(),
-    } satisfies Chunks;
+    };
 
     // 可执行入口点
     if (bin) {
@@ -181,8 +184,8 @@ function tryAddEntry(
         );
     }
 
-    // 处理 .d.ts
-    if (path.endsWith(".d.ts")) {
+    // 处理 types
+    if (conditions?.has("types")) {
         chunk.dts = true;
         return true;
     }
@@ -275,17 +278,6 @@ function walkExports(
 ) {
     for (const key in exports) {
         const elem = exports[key];
-
-        // 有 types 则表示需要生成 dts
-        if (key === "types") {
-            if (typeof elem === "string") {
-                tryAddEntry(elem, null, out);
-            } else {
-                out.errMsg = "types 条件的值必须是字符串";
-                return;
-            }
-            continue;
-        }
 
         // 加入条件
         const set = new Set(conditions);

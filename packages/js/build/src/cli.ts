@@ -19,10 +19,6 @@ const program = new Command()
         "a list of paths to empty before building.",
     )
     .option(
-        "-r --redirects <conditions...>",
-        "a list of conditions that allow redirection.",
-    )
-    .option(
         "-b --binConditions <conditions...>",
         "a list of conditions used to build an executable entry point.",
     )
@@ -61,9 +57,6 @@ async function readConfigFile(): Promise<{ config: Config; err?: unknown }> {
     }
     if (params.cleanDirs) {
         result.cleanDirs = params.cleanDirs;
-    }
-    if (params.redirects) {
-        result.redirects = params.redirects;
     }
     if (params.binConditions) {
         result.binConditions = params.binConditions;

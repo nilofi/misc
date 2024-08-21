@@ -12,6 +12,11 @@ export interface Config {
     project: string;
 
     /**
+     * 是否生成 `.d.ts` 文件，默认 `true`
+     */
+    emitDeclarationFile: boolean;
+
+    /**
      * 构建前清空的路径列表，默认 `["./dist"]`
      */
     cleanDirs: string[];
@@ -21,6 +26,8 @@ export interface Config {
      * - `node-addons`
      * - `cocos`
      * - `browser`
+     *
+     * @deprecated 使用 `imports` 替代该功能
      */
     redirects: string[];
 
@@ -83,6 +90,11 @@ export interface Config {
      * 尝试自动替换 `imports` 中存在的路径，默认 `true`
      */
     autoFixImportsPath: boolean;
+
+    /**
+     * 尝试自动修复 `.d.ts` 为 `.d.mts` 或者 `.d.cts`，默认 `true`
+     */
+    autoFixDeclarationFileExt: boolean;
 }
 
 export type ConfigInput = Partial<Config> & Required<Pick<Config, never>>;
@@ -90,6 +102,7 @@ export type ConfigInput = Partial<Config> & Required<Pick<Config, never>>;
 export function resolveConfig(config: ConfigInput): Config {
     const {
         project = cwd(),
+        emitDeclarationFile = true,
         redirects = [
             "browser",
             "node-addons",
@@ -123,10 +136,12 @@ export function resolveConfig(config: ConfigInput): Config {
         modules,
         apiReport,
         autoFixImportsPath = true,
+        autoFixDeclarationFileExt = true,
     } = config;
 
     return {
         project,
+        emitDeclarationFile,
         // 遗留功能，不再使用
         redirects: [],
         treeshake,
@@ -142,5 +157,6 @@ export function resolveConfig(config: ConfigInput): Config {
         modules,
         apiReport,
         autoFixImportsPath,
+        autoFixDeclarationFileExt,
     };
 }

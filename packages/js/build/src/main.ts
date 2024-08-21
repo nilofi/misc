@@ -5,6 +5,7 @@ import { rollup, watch as rollupWatch, type OutputOptions } from "rollup";
 import { generateApiReport } from "./addons/api-report/generator.js";
 import { generateBarrel } from "./addons/barrel-generator/generator.js";
 import { generateEntryPoints } from "./addons/entry-points-generator/generator.js";
+import { fixDeclarationFileExt } from "./addons/fix-declaration-file-ext/fixer.js";
 import { fixImportsPath } from "./addons/fix-imports-path/fixer.js";
 import { generateModules } from "./addons/modules-generator/generator.js";
 import {
@@ -19,6 +20,7 @@ import {
     chunkToDistDir,
     chunkToRollupInput,
     conditionsToFormat,
+    isW3CRuntimeKey,
     pickRedirectSuffix,
 } from "./utils.js";
 
@@ -28,6 +30,7 @@ export async function handle(
 ) {
     const {
         project,
+        emitDeclarationFile,
         treeshake,
         redirects,
         constants,
@@ -46,7 +49,7 @@ export async function handle(
         binConditions,
         json.bin,
     );
-    const fixeds = new Set<string>();
+    const forceFalseConditions = new Set<string>();
 
     if (chunks.errMsg) {
         console.error("发生错误：", chunks.errMsg);
@@ -63,11 +66,12 @@ export async function handle(
         const builder = new OptionsBuilder();
 
         if (forceCocos && chunk.conditions) {
-            redirects.forEach(v => {
-                if (chunk.conditions!.delete(v)) {
-                    fixeds.add(v);
+            for (const condition of chunk.conditions) {
+                if (isW3CRuntimeKey(condition)) {
+                    forceFalseConditions.add(condition);
                 }
-            });
+            }
+            forceFalseConditions.delete("cocos");
             chunk.conditions.add("cocos");
         }
 
@@ -82,7 +86,7 @@ export async function handle(
         builder.setTreeshake(treeshake);
         builder.setConditions(chunk.conditions);
         builder.setConstants({
-            ...chunksToConstans(chunks, fixeds, chunk),
+            ...chunksToConstans(chunks, forceFalseConditions, chunk),
             ...constants,
         });
         builder.setImports(
@@ -100,7 +104,7 @@ export async function handle(
             return false;
         }
         builder.setRedirectSuffix(suffixResult.suffix);
-        builder.setGenerateDeclarationFile(chunk.dts);
+        builder.setGenerateDeclarationFile(emitDeclarationFile);
         if (first) {
             builder.setClearDirs(cleanDirs);
             first = false;
@@ -191,7 +195,13 @@ async function executePreBuildAddons(config: Config) {
 }
 
 async function executePostBuildAddons(config: Config) {
-    const { project, apiReport, onlyBuildConditions } = config;
+    const {
+        project,
+        apiReport,
+        onlyBuildConditions,
+        autoFixDeclarationFileExt,
+    } = config;
+
     if (apiReport?.atBuild) {
         const { output } = apiReport;
         const json = await xfs.json<PackageJson>(join(project, "package.json"));
@@ -221,5 +231,9 @@ async function executePostBuildAddons(config: Config) {
                 }
             }
         }
+    }
+
+    if (autoFixDeclarationFileExt) {
+        await fixDeclarationFileExt(project);
     }
 }

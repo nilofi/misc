@@ -108,10 +108,11 @@ export function conditionsToFormat(
 
 export function chunksToConstans(
     chunks: Chunks,
-    fixeds: Set<string>,
+    forceFalses: Set<string>,
     curr?: Chunk,
 ) {
     const conditions: Record<string, unknown> = {};
+
     for (const [key, chunk] of chunks.chunks) {
         if (chunk.conditions) {
             for (const condition of chunk.conditions) {
@@ -119,14 +120,17 @@ export function chunksToConstans(
             }
         }
     }
-    for (const fixed of fixeds) {
-        conditions[fixed.toUpperCase()] = false;
-    }
+
     if (curr?.conditions) {
         for (const condition of curr.conditions) {
             conditions[condition.toUpperCase()] = true;
         }
     }
+
+    for (const condition of forceFalses) {
+        conditions[condition.toUpperCase()] = false;
+    }
+
     return conditions;
 }
 
@@ -166,4 +170,32 @@ export function isJsExt(ext: string) {
         ext === "cjsx" ||
         ext === "mjsx"
     );
+}
+
+export function isW3CRuntimeKey(key: string) {
+    // key list from https://runtime-keys.proposal.wintercg.org/
+    // extra list:
+    // - `node-addons`
+    // - `cocos`
+    // - `browser`
+    return new Set([
+        "browser",
+        "node-addons",
+        "edge-routine",
+        "workerd",
+        "deno",
+        "lagon",
+        "react-native",
+        "moddable",
+        "netlify",
+        "electron",
+        "node",
+        "bun",
+        "react-server",
+        "edge-light",
+        "fastly",
+        "kiesel",
+        "wasmer",
+        "cocos",
+    ]).has(key);
 }

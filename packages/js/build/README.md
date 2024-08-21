@@ -85,7 +85,7 @@ So if there are multiple builds, of course, they can't all output to the root of
 
 Note that the mapping rules for `bin` configuration are different, it will always map starting from `dist/bin`, for example, `dist/bin/xxx.js` will be mapped to `src/xxx.ts`, and its existence will be considered as having multiple builds.
 
-## More Features
+## Basic Features
 
 ### Multiple Entry Points
 
@@ -106,26 +106,19 @@ In the above example, `./src/index.ts` and `./src/sub/index.ts` will be built as
 
 Different subpaths with the same conditions will be merged into one build as multiple entry points, rather than as multiple independent builds.
 
+### Generating TypeScript Declaration Files
+
+Enabling the `emitDeclarationFile` option will generate `.d.ts` declaration files in the same directory, which is enabled by default.
+
+Additionally, the tool will enable the `autoFixDeclarationFileExt` option by default to attempt to fix [TypeScript issue #53045](https://github.com/microsoft/TypeScript/issues/53045).
+
+These options can be enabled or disabled through the [configuration file](#using-configuration-file).
+
 ### Conditional Exports
 
 For a detailed introduction to conditional exports, please refer to the [Node.js documentation](https://nodejs.org/docs/latest-v20.x/api/packages.html#conditional-exports).
 
 Conditional exports have several typical use cases:
-
-#### Generate TypeScript Declaration Files
-
-When you need to generate `.d.ts` TypeScript declaration files, you can add a `types` condition to the entry points in `exports`:
-
-```json
-{
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  }
-}
-```
 
 #### Export Both ESM and CJS Modules Simultaneously
 
@@ -135,7 +128,6 @@ Just add `import` or `require` conditions to the entry points in `exports`:
 {
   "exports": {
     ".": {
-      "types": "./dist/es/index.d.ts",
       "import": "./dist/es/index.js",
       "require": "./dist/cjs/index.cjs"
     }
@@ -144,6 +136,22 @@ Just add `import` or `require` conditions to the entry points in `exports`:
 ```
 
 If there are no explicit `import` or `require` conditions, the output module format will be determined based on the `type` field in `package.json`.
+
+**Controlling the Output File Extensions**
+
+The output file extensions are automatically determined based on conditions and the `type` field of the code package.
+
+For example, the default output file extension for `require` conditions with `type: "module"` is `.cjs`, meaning that even if you specify `"require": "./dist/cjs/index.mjs"`, it will not output a file with the `.mjs` extension.
+
+If you need to force a specific extension, you can add the `forceExts` field in the [configuration file](#using-configuration-file):
+
+```js
+export default {
+    forceExts: { esm: ".mjs", cjs: ".cjs" },
+};
+```
+
+You can use the [Are the types wrong?](https://arethetypeswrong.github.io) website to check if your package can be imported correctly.
 
 #### Export Different Entry Points Based on Platform
 
@@ -154,24 +162,20 @@ Suppose your library needs to export different entry points based on the executi
   "exports": {
     ".": {
       "node": {
-        "types": "./dist/node-es/index.d.ts",
         "import": "./dist/node-es/index.js",
         "require": "./dist/node-cjs/index.cjs"
       },
       "default": {
-        "types": "./dist/default-es/index.d.ts",
         "import": "./dist/default-es/index.js",
         "require": "./dist/default-cjs/index.cjs"
       }
     },
     "./sub": {
       "node": {
-        "types": "./dist/node-es/sub/index.d.ts",
         "import": "./dist/node-es/sub/index.js",
         "require": "./dist/node-cjs/sub/index.cjs"
       },
       "default": {
-        "types": "./dist/default-es/sub/index.d.ts",
         "import": "./dist/default-es/sub/index.js",
         "require": "./dist/default-cjs/sub/index.cjs"
       }
@@ -182,9 +186,9 @@ Suppose your library needs to export different entry points based on the executi
 
 The above example will generate four build tasks:
 
-1. Build conditions: `node`, `import`, `types`, entry points: `.`, `./sub`
+1. Build conditions: `node`, `import`, entry points: `.`, `./sub`
 2. Build conditions: `node`, `require`, entry points: `.`, `./sub`
-3. Build conditions: `default`, `import`, `types`, entry points: `.`, `./sub`
+3. Build conditions: `default`, `import`, entry points: `.`, `./sub`
 4. Build conditions: `default`, `require`, entry points: `.`, `./sub`
 
 ### Using Build Condition Constant Module
@@ -281,6 +285,14 @@ Then you can import different modules based on the platform by importing this pa
 import * as lib from "#lib.ts";
 ```
 
+By default, the `autoFixImportsPath` option is enabled, which automatically replaces all import paths in the project with paths existing in `imports` before the build. If this feature encounters issues, it can be disabled through the [configuration file](#using-configuration-file):
+
+```js
+export default {
+    autoFixImportsPath: false,
+};
+```
+
 ### Building Executable Entry Points
 
 If your library needs to build an executable entry point, you can configure it through the `bin` field:
@@ -302,6 +314,108 @@ export default {
     binConditions: ["node", "import"],
 };
 ```
+
+## More Features
+
+### Automatic Entry Point Generation
+
+You can create a [configuration file](#using-configuration-file) and add the `entryPoint` field configuration:
+
+```js
+export default {
+    entryPoint: {
+        atBuild: true,
+        entryPoints: {
+            ".": "./src/index.ts",
+            "./polyfills": "./src/polyfills.ts",
+        },
+        conditions: ["node", "default"],
+    },
+};
+```
+
+The above configuration will automatically generate the following `package.json` content:
+
+```json
+"exports": {
+  ".": {
+    "node": {
+      "import": "./dist/node-es/index.js",
+      "require": "./dist/node-cjs/index.cjs"
+    },
+    "default": {
+      "import": "./dist/default-es/index.js",
+      "require": "./dist/default-cjs/index.cjs"
+    }
+  },
+  "./polyfills": {
+    "node": {
+      "import": "./dist/node-es/polyfills.js",
+      "require": "./dist/node-cjs/polyfills.cjs"
+    },
+    "default": {
+      "import": "./dist/default-es/polyfills.js",
+      "require": "./dist/default-cjs/polyfills.cjs"
+    }
+  },
+}
+```
+
+### Automatic Barrel File Generation
+
+You can create a [configuration file](#using-configuration-file) and add the `barrel` field configuration:
+
+```js
+export default {
+    barrel: {
+        atBuild: true,
+        files: [
+            {
+                file: "./src/index.ts",
+                include: ["src/**/*"],
+                exclude: [
+                    "**/*polyfills*/**",
+                    "**/*polyfills*",
+                ],
+                ctix: {},
+            },
+        ],
+    },
+};
+```
+
+The above configuration will automatically generate the following `index.ts` content:
+
+```ts
+// created from ctix
+
+import "./internal/singleton-check.js";
+export * from "./exports/boost-utils.js";
+export * from "./exports/disposal-symbol.js";
+```
+
+Internally, the tool uses the [ctix](https://github.com/imjuni/ctix) library's `bundle mode`, and you can modify any configuration through the `ctix` field.
+
+### Module Declaration File Generation
+
+This feature is generally used to generate a `modules.json` file that records all module information.
+
+For details, refer to the usage of [@xenon.js](https://github.com/nilofi/xenon.js).
+
+### API Report Generation
+
+You can create a [configuration file](#using-configuration-file) and add the `apiReport` field configuration:
+
+```js
+export default {
+    apiReport: {
+        atBuild: true,
+        output: "./.report/api-report",
+    },
+};
+```
+
+Internally, the tool uses [api-extractor](https://api-extractor.com/) to generate a public interface report for each entry point.
 
 ## More Configuration
 
@@ -343,13 +457,10 @@ If a relative path is passed, it needs to be relative to the execution directory
 
 ## Notes
 
-- Currently, source file suffixes other than `.ts` and build artifact suffixes other than `.js` are not supported.
-- Currently, exporting or importing subpaths containing `*` wildcards is not supported.
-- Currently, customizing the source code directory `src` and build output directory `dist` is not allowed.
-- The value of the `types` condition must be a string and cannot be nested with sub-conditions.
-- The path of the `types` declaration file must correspond to the path of the source code, and as long as one entry point needs to generate a declaration file, all source code in a single build will generate declaration files, because TypeScript does not support generating declaration files separately.
-- Currently, as long as conditions other than `import`, `require`, `default` appear, it will be considered as multiple builds.
-- `redirects` is a legacy option and should be replaced with [Conditional Imports](#using-subpath-imports).
+- Currently, other source file extensions besides `.ts` are not supported. (TODO)
+- Currently, exporting or importing subpaths containing the `*` wildcard is not supported. (TODO)
+- Currently, custom source directory `src` and build output directory `dist` are not allowed. (TODO)
+- Currently, any condition other than `import`, `require`, or `default` will be considered as multiple builds. (TODO)
 
 ## Contributing
 

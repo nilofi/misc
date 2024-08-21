@@ -53,10 +53,7 @@ function generateDist(src: string, condition: string = "") {
         "src",
         `dist/${condition ? condition + "-" : ""}es`,
     );
-    info.base = info.name + ".d.ts";
-    const typesPath = format(info);
     return {
-        types: typesPath,
         import: importPath,
         require: requirePath,
     };
