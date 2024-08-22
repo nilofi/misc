@@ -28,7 +28,7 @@
   "scripts": {
     "build": "xe-build",
     "dev": "xe-build -w",
-    "clean": "rimraf \"./dist\" && rimraf \"./temp\"",
+    "clean": "rimraf ./dist && rimraf ./temp",
     "lint": "eslint"
   },
   "exports": {
