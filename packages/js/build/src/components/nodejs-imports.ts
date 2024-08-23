@@ -1,4 +1,5 @@
-import { dirname, relative, resolve, sep } from "path";
+import { relativeDot, toPosix } from "@xenon.js/misc";
+import { dirname, resolve } from "path";
 import ts, {
     type CallExpression,
     type CustomTransformerFactory,
@@ -70,19 +71,10 @@ function getImportsFile(
         if (target.endsWith(".ts")) {
             target = target.slice(0, -3) + ".js";
         }
-        return relativeWithDot(dirname(importer), target);
+        return toPosix(relativeDot(dirname(importer), target));
     } else {
         return undefined;
     }
-}
-
-function relativeWithDot(from: string, to: string) {
-    const relativePath = relative(from, to);
-    return relativePath === ""
-        ? `.${sep}`
-        : relativePath.startsWith("..")
-          ? relativePath
-          : `.${sep}` + relativePath;
 }
 
 function isAsyncImport(node: Node): node is CallExpression {

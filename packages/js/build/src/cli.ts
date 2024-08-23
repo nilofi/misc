@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
 import { Command } from "@commander-js/extra-typings";
+import { existsSync } from "fs";
 import { resolve } from "path";
 import { cwd } from "process";
 import { resolveConfig, type Config } from "./config.js";
 import { build, watch } from "./main.js";
 
-const CONFIG_PATH = "xebuild.config.js";
+const CONFIG_PATH = ["xebuild.config.js", "xebuild.config.mjs"];
 
 const program = new Command()
     .name("xe-build")
@@ -38,7 +39,12 @@ async function readConfigFile(): Promise<{ config: Config; err?: unknown }> {
 
     try {
         const { default: config } = await import(
-            resolve(cwd(), params.config ?? CONFIG_PATH)
+            resolve(
+                cwd(),
+                params.config ??
+                    CONFIG_PATH.find(v => existsSync(resolve(cwd(), v))) ??
+                    "",
+            )
         );
         result = resolveConfig(config);
     } catch (error) {

@@ -1,4 +1,4 @@
-import { format, join, parse, sep } from "path";
+import { posix } from "path";
 import type { LogHandlerWithDefault, ModuleFormat } from "rollup";
 import type { Chunk, Chunks } from "./builders/chunk-builder.js";
 
@@ -46,13 +46,13 @@ export function logger(): LogHandlerWithDefault {
  * 如果 Key 是 "." `dist/abc/index.js` 对应 `src/abc/index.ts`
  */
 function chunkToSrcPath(chunkKey: string, chunkDist: string) {
-    const obj = parse(chunkDist);
+    const obj = posix.parse(chunkDist);
 
     obj.dir = obj.dir.replace(chunkToDistDir(chunkKey), "src");
     obj.ext = ".ts";
     obj.base = obj.name + obj.ext;
 
-    return format(obj);
+    return posix.format(obj);
 }
 
 /**
@@ -70,12 +70,12 @@ export function chunkToDistDir(chunkKey: string) {
  * `./dist/index.js` -> `dist/index`
  */
 function chunkToEntryKey(chunkKey: string, chunkDist: string) {
-    const info = parse(chunkDist);
-    let key = join(
+    const info = posix.parse(chunkDist);
+    let key = posix.join(
         info.dir.replace(`${chunkToDistDir(chunkKey)}`, ""),
         info.name,
     );
-    if (key[0] === sep) {
+    if (key[0] === posix.sep) {
         key = key.slice(1);
     }
     return key;

@@ -1,3 +1,4 @@
+import { toPosix } from "@xenon.js/misc";
 import { existsSync } from "fs";
 import { dirname, parse, resolve } from "path";
 import type { Plugin } from "rollup";
@@ -27,8 +28,8 @@ function getRedirectFile(
     if (isAlias) return null;
 
     // 解析出绝对路径并判断文件是否存在
-    const targetFilePath = `${dir}/${name}.${opts.suffix}.ts`;
-    const targetSource = `${dir}/${name}.${opts.suffix}${ext}`;
+    const targetFilePath = `${toPosix(dir)}/${name}.${opts.suffix}.ts`;
+    const targetSource = `${toPosix(dir)}/${name}.${opts.suffix}${ext}`;
     const targetFileAbsPath = resolve(dirname(importer ?? ""), targetFilePath);
 
     if (!existsSync(targetFileAbsPath)) return null;

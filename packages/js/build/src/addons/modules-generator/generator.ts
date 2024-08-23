@@ -1,4 +1,4 @@
-import { isChild, xfs } from "@xenon.js/misc";
+import { isChild, toPosix, xfs } from "@xenon.js/misc";
 import {
     type IDependency,
     type IModule,
@@ -40,10 +40,7 @@ export async function generateModules(config: ModulesGeneratorConfig) {
                         isChild(resolve(project, v), path),
                     );
                     if (v.isDirectory() && !inExclude) {
-                        const key = relative(srcPath, path).replaceAll(
-                            "\\",
-                            "/",
-                        );
+                        const key = toPosix(relative(srcPath, path));
                         keys.add(key);
 
                         if (!modules[key]) {
@@ -67,9 +64,7 @@ export async function generateModules(config: ModulesGeneratorConfig) {
 
     for (const file of entryPoints) {
         const path = resolve(project, file);
-        const key = relative(srcPath, path)
-            .replaceAll("\\", "/")
-            .replace(".ts", "");
+        const key = toPosix(relative(srcPath, path)).replace(".ts", "");
         keys.add(key);
 
         if (!modules[key]) {

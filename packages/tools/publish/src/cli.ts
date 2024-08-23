@@ -4,6 +4,7 @@ import * as ui from "@inquirer/prompts";
 import { xfs, type PackageJson } from "@xenon.js/misc";
 import { config as loadEnv } from "dotenv";
 import { $ } from "execa";
+import { existsSync } from "fs";
 import { Octokit } from "octokit";
 import { join, resolve } from "path";
 import { cwd, env } from "process";
@@ -12,7 +13,7 @@ import { PublishType, resolveConfig, type Config } from "./config.js";
 import { STAGE_TO_NPM_TAG } from "./npm.js";
 import { Stage, STAGES } from "./stage.js";
 
-const CONFIG_PATH = "xepublish.config.js";
+const CONFIG_PATH = ["xebuild.config.js", "xebuild.config.mjs"];
 
 const program = new Command()
     .name("xe-publish")
@@ -35,7 +36,12 @@ async function readConfigFile(): Promise<{ config: Config; err?: unknown }> {
 
     try {
         const { default: config } = await import(
-            resolve(cwd(), params.config ?? CONFIG_PATH)
+            resolve(
+                cwd(),
+                params.config ??
+                    CONFIG_PATH.find(v => existsSync(resolve(cwd(), v))) ??
+                    "",
+            )
         );
         result = resolveConfig(config);
     } catch (error) {

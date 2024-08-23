@@ -1,3 +1,4 @@
+import { toPosix } from "@xenon.js/misc";
 import { extname, normalize, sep } from "path";
 import { isJsExt } from "../utils.js";
 
@@ -120,7 +121,7 @@ export function genChunks(
             tryAddEntry(exports, new Set(), out);
         } else {
             out.chunks.set(".", {
-                entrys: new Set([normalize(exports)]),
+                entrys: new Set([toPosix(normalize(exports))]),
                 conditions: new Set(),
                 dts: false,
             });
@@ -203,7 +204,7 @@ function tryAddEntry(
         }
     }
 
-    chunk.entrys.add(normalize(path));
+    chunk.entrys.add(toPosix(normalize(path)));
 
     return true;
 }
@@ -255,7 +256,7 @@ function tryHandleOneCondExports(
 
             const elemm = elem[key];
             if (typeof elemm === "string") {
-                entrys.add(normalize(elemm));
+                entrys.add(toPosix(normalize(elemm)));
             } else {
                 stack.push(elemm);
             }
