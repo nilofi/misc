@@ -1,9 +1,18 @@
+import { readFileSync, writeFileSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
 import * as JSONC from "../jsonc/jsonc.js";
 
 export async function text(path: string, encoding: BufferEncoding = "utf-8") {
     try {
         return await readFile(path, encoding);
+    } catch (error) {
+        return undefined;
+    }
+}
+
+export function textSync(path: string, encoding: BufferEncoding = "utf-8") {
+    try {
+        return readFileSync(path, encoding);
     } catch (error) {
         return undefined;
     }
@@ -21,6 +30,15 @@ export async function json<T>(
     }
 }
 
+export function jsonSync<T>(path: string, encoding: BufferEncoding = "utf-8") {
+    try {
+        const str = readFileSync(path, encoding);
+        return JSON.parse(str) as T;
+    } catch (error) {
+        return undefined;
+    }
+}
+
 export async function jsonc<T>(
     path: string,
     options?: {
@@ -31,7 +49,23 @@ export async function jsonc<T>(
     try {
         const { encoding = "utf-8", removeComments } = options ?? {};
         const str = await readFile(path, encoding);
-        return await JSONC.parse(str, undefined, removeComments);
+        return JSONC.parse<T>(str, undefined, removeComments);
+    } catch (error) {
+        return undefined;
+    }
+}
+
+export function jsoncSync<T>(
+    path: string,
+    options?: {
+        encoding?: BufferEncoding;
+        removeComments?: boolean;
+    },
+): T | undefined {
+    try {
+        const { encoding = "utf-8", removeComments } = options ?? {};
+        const str = readFileSync(path, encoding);
+        return JSONC.parse<T>(str, undefined, removeComments);
     } catch (error) {
         return undefined;
     }
@@ -46,6 +80,15 @@ export async function bytes(path: string) {
     }
 }
 
+export function bytesSync(path: string) {
+    try {
+        const buffer = readFileSync(path);
+        return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.length);
+    } catch (error) {
+        return undefined;
+    }
+}
+
 export async function write(
     path: string,
     content: string | BufferSource,
@@ -53,6 +96,18 @@ export async function write(
 ) {
     try {
         await writeFile(path, content as string, encoding);
+    } catch (error) {
+        // do nothings.
+    }
+}
+
+export function writeSync(
+    path: string,
+    content: string | BufferSource,
+    encoding: BufferEncoding = "utf-8",
+) {
+    try {
+        writeFileSync(path, content as string, encoding);
     } catch (error) {
         // do nothings.
     }
@@ -74,6 +129,22 @@ export async function writeJson(
     }
 }
 
+export function writeJsonSync(
+    path: string,
+    json: unknown,
+    options?: {
+        encoding?: BufferEncoding;
+        space?: number;
+    },
+) {
+    try {
+        const { encoding = "utf-8", space } = options ?? {};
+        writeFileSync(path, JSON.stringify(json, undefined, space), encoding);
+    } catch (error) {
+        // do nothings.
+    }
+}
+
 export async function writeJsonc(
     path: string,
     json: unknown,
@@ -89,6 +160,22 @@ export async function writeJsonc(
             JSONC.stringify(json, undefined, space),
             encoding,
         );
+    } catch (error) {
+        // do nothings.
+    }
+}
+
+export function writeJsoncSync(
+    path: string,
+    json: unknown,
+    options?: {
+        encoding?: BufferEncoding;
+        space?: string | number;
+    },
+) {
+    try {
+        const { encoding = "utf-8", space } = options ?? {};
+        writeFileSync(path, JSONC.stringify(json, undefined, space), encoding);
     } catch (error) {
         // do nothings.
     }

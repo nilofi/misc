@@ -4,7 +4,6 @@ import * as ui from "@inquirer/prompts";
 import { xfs, type PackageJson } from "@xenon.js/misc";
 import { config as loadEnv } from "dotenv";
 import { $ } from "execa";
-import { existsSync } from "fs";
 import { Octokit } from "octokit";
 import { join, resolve } from "path";
 import { cwd, env } from "process";
@@ -39,7 +38,7 @@ async function readConfigFile(): Promise<{ config: Config; err?: unknown }> {
             resolve(
                 cwd(),
                 params.config ??
-                    CONFIG_PATH.find(v => existsSync(resolve(cwd(), v))) ??
+                    CONFIG_PATH.find(v => xfs.has(resolve(cwd(), v))) ??
                     "",
             )
         );

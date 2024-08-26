@@ -142,6 +142,8 @@ export function config(config = {}) {
                 "@typescript-eslint/consistent-type-definitions": "off",
                 "@typescript-eslint/no-extraneous-class": "off",
                 "@typescript-eslint/class-literal-property-style": "off",
+                "@typescript-eslint/no-unsafe-declaration-merging": "off",
+                "@typescript-eslint/unified-signatures": "off",
 
                 // 在推荐规则内，但需允许 (...args: any[]) 用法
                 "@typescript-eslint/no-explicit-any": [

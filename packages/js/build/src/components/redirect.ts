@@ -1,5 +1,4 @@
-import { toPosix } from "@xenon.js/misc";
-import { existsSync } from "fs";
+import { toPosix, xfs } from "@xenon.js/misc";
 import { dirname, parse, resolve } from "path";
 import type { Plugin } from "rollup";
 import ts, {
@@ -32,7 +31,7 @@ function getRedirectFile(
     const targetSource = `${toPosix(dir)}/${name}.${opts.suffix}${ext}`;
     const targetFileAbsPath = resolve(dirname(importer ?? ""), targetFilePath);
 
-    if (!existsSync(targetFileAbsPath)) return null;
+    if (!xfs.has(targetFileAbsPath)) return null;
 
     // code.node.ts -> code.ts 不需要重定向
     if (targetFileAbsPath === importer) return null;

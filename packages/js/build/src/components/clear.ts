@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, rmdirSync } from "fs";
+import { xfs } from "@xenon.js/misc";
 import { resolve } from "path";
 import { rimraf } from "rimraf";
 import { type Plugin } from "rollup";
@@ -24,7 +24,7 @@ export function clear(opts: ClearOptions): Plugin {
         for (let index = 0; index < paths.length; index++) {
             const path = paths[index];
             const abPath = resolve(workspace, path);
-            if (existsSync(abPath)) {
+            if (xfs.has(abPath)) {
                 if (clearIfEmpty) {
                     if (rmdirIfEmpty(abPath)) {
                         console.log("cleared: ", abPath);
@@ -53,9 +53,9 @@ export function clear(opts: ClearOptions): Plugin {
 
 function rmdirIfEmpty(path: string) {
     try {
-        const files = readdirSync(path);
+        const files = xfs.walkSync(path);
         if (files.length === 0) {
-            rmdirSync(path);
+            xfs.removeSync(path);
             return true;
         }
         return false;

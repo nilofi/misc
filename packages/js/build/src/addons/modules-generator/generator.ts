@@ -6,7 +6,6 @@ import {
     cruise,
 } from "dependency-cruiser";
 import extractTSConfig from "dependency-cruiser/config-utl/extract-ts-config";
-import { readdirSync } from "fs";
 import { join, relative, resolve } from "path";
 import type { ModulesGeneratorConfig } from "./config.js";
 
@@ -31,34 +30,32 @@ export async function generateModules(config: ModulesGeneratorConfig) {
     const modules = (await xfs.json<Modules>(modulesPath)) ?? {};
     const keys = new Set<string>();
 
-    readdirSync(srcPath, { withFileTypes: true }).forEach(v => {
-        if (v.isDirectory()) {
-            readdirSync(join(v.path, v.name), { withFileTypes: true }).forEach(
-                v => {
-                    const path = join(v.path, v.name);
-                    const inExclude = exclude.some(v =>
-                        isChild(resolve(project, v), path),
-                    );
-                    if (v.isDirectory() && !inExclude) {
-                        const key = toPosix(relative(srcPath, path));
-                        keys.add(key);
+    xfs.walkSync(srcPath, { depth: 0 }).forEach(v => {
+        if (v.stats.isDirectory()) {
+            xfs.walkSync(v.path, { depth: 0 }).forEach(v => {
+                const path = v.path;
+                const inExclude = exclude.some(v =>
+                    isChild(resolve(project, v), path),
+                );
+                if (v.stats.isDirectory() && !inExclude) {
+                    const key = toPosix(relative(srcPath, path));
+                    keys.add(key);
 
-                        if (!modules[key]) {
-                            modules[key] = {
-                                name: "",
-                                description: "",
-                                files: [],
-                                dependencies: [],
-                            };
-                        } else {
-                            modules[key].files.length = 0;
-                            modules[key].dependencies.length = 0;
-                        }
-
-                        modules[key].path = path;
+                    if (!modules[key]) {
+                        modules[key] = {
+                            name: "",
+                            description: "",
+                            files: [],
+                            dependencies: [],
+                        };
+                    } else {
+                        modules[key].files.length = 0;
+                        modules[key].dependencies.length = 0;
                     }
-                },
-            );
+
+                    modules[key].path = path;
+                }
+            });
         }
     });
 

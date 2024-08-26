@@ -29,9 +29,6 @@ importers:
       lint-staged:
         specifier: ^15.2.9
         version: 15.2.9
-      only-allow:
-        specifier: ^1.2.1
-        version: 1.2.1
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -384,8 +381,8 @@ importers:
         specifier: ^14
         version: 14.18.63
       '@xenon.js/build':
-        specifier: ^1.0.6
-        version: 1.0.6(@types/node@14.18.63)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.5.4))(prettier@3.3.3)
+        specifier: ^1.0.7
+        version: 1.0.7(@types/node@14.18.63)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.5.4))(prettier@3.3.3)
       '@xenon.js/configs':
         specifier: workspace:^
         version: link:../configs
@@ -1691,8 +1688,8 @@ packages:
   '@vue/shared@3.4.38':
     resolution: {integrity: sha512-q0xCiLkuWWQLzVrecPb0RMsNWyxICOjPrcrwxTUEHb1fsnvni4dcuyG7RT/Ie7VPTvnjzIaWzRMUBsrqNj/hhw==}
 
-  '@xenon.js/build@1.0.6':
-    resolution: {integrity: sha512-IYKmikkLs0BbdvJe+fZ1024pBEyAHUekRrqpKqe44KEs2QTX+XkPFLn890wXxdzqtqlFA8V0U7r4gHlrY5TpxQ==}
+  '@xenon.js/build@1.0.7':
+    resolution: {integrity: sha512-1fb6VWqWcajllo3IEV/UYtIQn/ZMS2E6dmVNtAlaWmkJEN2K5P0l3TA1oh+747UVFQ+VpATQkMO6JQCTK4/rqA==}
     hasBin: true
 
   '@xenon.js/misc@1.0.2':
@@ -3395,10 +3392,6 @@ packages:
     resolution: {integrity: sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==}
     engines: {node: '>=18'}
 
-  only-allow@1.2.1:
-    resolution: {integrity: sha512-M7CJbmv7UCopc0neRKdzfoGWaVZC+xC1925GitKH9EAqYFzX9//25Q7oX4+jw0tiCCj+t5l6VZh8UPH23NZkMA==}
-    hasBin: true
-
   optionator@0.9.3:
     resolution: {integrity: sha512-JjCoypp+jKn1ttEFExxhetCKeJt9zhAgAve5FXHixTvFDW/5aEktX9bufBKLRRMdU7bNtpLfcGu94B3cdEJgjg==}
     engines: {node: '>= 0.8.0'}
@@ -4294,10 +4287,6 @@ packages:
 
   which-boxed-primitive@1.0.2:
     resolution: {integrity: sha512-bwZdv0AKLpplFY2KZRX6TvyuN7ojjr7lwkg6ml0roIy9YeuSr7JS372qlNW18UQYzgYK9ziGcerWqZOmEn9VNg==}
-
-  which-pm-runs@1.1.0:
-    resolution: {integrity: sha512-n1brCuqClxfFfq/Rb0ICg9giSZqCS+pLtccdag6C2HyufBrh3fBOiy9nb6ggRMvWOVH5GrdJskj5iGTZNxd7SA==}
-    engines: {node: '>=4'}
 
   which-typed-array@1.1.15:
     resolution: {integrity: sha512-oV0jmFtUky6CXfkqehVvBP/LSWJ2sy4vWMioiENyJLePrBO/yKyV9OyJySfAKosh+RYkIl5zJCNZ8/4JncrpdA==}
@@ -5826,7 +5815,7 @@ snapshots:
 
   '@vue/shared@3.4.38': {}
 
-  '@xenon.js/build@1.0.6(@types/node@14.18.63)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.5.4))(prettier@3.3.3)':
+  '@xenon.js/build@1.0.7(@types/node@14.18.63)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.5.4))(prettier@3.3.3)':
     dependencies:
       '@commander-js/extra-typings': 12.1.0(commander@12.1.0)
       '@microsoft/api-extractor': 7.47.6(@types/node@14.18.63)
@@ -7859,10 +7848,6 @@ snapshots:
     dependencies:
       mimic-function: 5.0.1
 
-  only-allow@1.2.1:
-    dependencies:
-      which-pm-runs: 1.1.0
-
   optionator@0.9.3:
     dependencies:
       '@aashutoshrathi/word-wrap': 1.2.6
@@ -8783,8 +8768,6 @@ snapshots:
       is-number-object: 1.0.7
       is-string: 1.0.7
       is-symbol: 1.0.4
-
-  which-pm-runs@1.1.0: {}
 
   which-typed-array@1.1.15:
     dependencies:

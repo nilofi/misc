@@ -12,8 +12,10 @@ export function isChild(
     if (includeSelf && _relative === "") {
         return true;
     } else {
-        return (
-            _relative && !_relative.startsWith("..") && !isAbsolute(_relative)
+        return !!(
+            _relative &&
+            !_relative.startsWith("..") &&
+            !isAbsolute(_relative)
         );
     }
 }

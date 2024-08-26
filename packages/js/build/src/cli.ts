@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from "@commander-js/extra-typings";
-import { existsSync } from "fs";
+import { xfs } from "@xenon.js/misc";
 import { resolve } from "path";
 import { cwd } from "process";
 import { resolveConfig, type Config } from "./config.js";
@@ -42,7 +42,7 @@ async function readConfigFile(): Promise<{ config: Config; err?: unknown }> {
             resolve(
                 cwd(),
                 params.config ??
-                    CONFIG_PATH.find(v => existsSync(resolve(cwd(), v))) ??
+                    CONFIG_PATH.find(v => xfs.has(resolve(cwd(), v))) ??
                     "",
             )
         );

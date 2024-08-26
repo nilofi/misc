@@ -1,5 +1,5 @@
 // copy from https://github.com/lightyen/typescript-paths/tree/main/packages/rollup-plugin-tsconfig-paths
-import { existsSync } from "fs";
+import { xfs } from "@xenon.js/misc";
 import path from "path";
 import type { Plugin } from "rollup";
 import { createHandler } from "typescript-paths";
@@ -14,7 +14,7 @@ export function tsConfigPaths(): Plugin {
         name: "tsconfig-paths",
         buildStart() {
             handler = createHandler({
-                falllback: moduleName => existsSync(moduleName),
+                falllback: moduleName => xfs.has(moduleName),
             });
             return;
         },

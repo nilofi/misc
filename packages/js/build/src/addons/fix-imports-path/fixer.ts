@@ -5,7 +5,6 @@ import {
     xfs,
     type PackageJson,
 } from "@xenon.js/misc";
-import { readdirSync } from "fs";
 import { dirname, join, resolve } from "path";
 import type { PackageJsonExportsWithConditions } from "../../builders/chunk-builder.js";
 
@@ -33,30 +32,24 @@ export async function fixImportsPath(project: string) {
             resolveCondition(imports[path]);
         }
 
-        const files = readdirSync(join(project, "src"), {
-            withFileTypes: true,
-            recursive: true,
-        }).filter(v => v.isFile());
+        for (const { path, stats } of xfs.walkSync(join(project, "src"))) {
+            if (!stats.isFile()) {
+                continue;
+            }
 
-        for (const v of files) {
-            const barrelFile = join(v.path, v.name);
-
-            if (!excludes.has(barrelFile)) {
-                let content = (await xfs.text(barrelFile))!;
+            if (!excludes.has(path)) {
+                let content = (await xfs.text(path))!;
 
                 for (const [a, b] of paths) {
                     content = content.replace(
                         toPosix(
-                            toExtname(
-                                relativeDot(dirname(barrelFile), b),
-                                ".js",
-                            ),
+                            toExtname(relativeDot(dirname(path), b), ".js"),
                         ),
                         a,
                     );
                 }
 
-                await xfs.write(barrelFile, content);
+                await xfs.write(path, content);
             }
         }
     }
