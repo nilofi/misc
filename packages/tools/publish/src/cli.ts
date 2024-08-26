@@ -8,9 +8,10 @@ import { Octokit } from "octokit";
 import { join, resolve } from "path";
 import { cwd, env } from "process";
 import semver, { SemVer } from "semver";
+import { pathToFileURL } from "url";
 import { PublishType, resolveConfig, type Config } from "./config.js";
 import { STAGE_TO_NPM_TAG } from "./npm.js";
-import { Stage, STAGES } from "./stage.js";
+import { STAGES, Stage } from "./stage.js";
 
 const CONFIG_PATH = ["xebuild.config.js", "xebuild.config.mjs"];
 
@@ -35,12 +36,14 @@ async function readConfigFile(): Promise<{ config: Config; err?: unknown }> {
 
     try {
         const { default: config } = await import(
-            resolve(
-                cwd(),
-                params.config ??
-                    CONFIG_PATH.find(v => xfs.has(resolve(cwd(), v))) ??
-                    "",
-            )
+            pathToFileURL(
+                resolve(
+                    cwd(),
+                    params.config ??
+                        CONFIG_PATH.find(v => xfs.has(resolve(cwd(), v))) ??
+                        "",
+                ),
+            ).toString()
         );
         result = resolveConfig(config);
     } catch (error) {

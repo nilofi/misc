@@ -4,6 +4,7 @@ import { Command } from "@commander-js/extra-typings";
 import { xfs } from "@xenon.js/misc";
 import { resolve } from "path";
 import { cwd } from "process";
+import { pathToFileURL } from "url";
 import { resolveConfig, type Config } from "./config.js";
 import { build, watch } from "./main.js";
 
@@ -39,12 +40,14 @@ async function readConfigFile(): Promise<{ config: Config; err?: unknown }> {
 
     try {
         const { default: config } = await import(
-            resolve(
-                cwd(),
-                params.config ??
-                    CONFIG_PATH.find(v => xfs.has(resolve(cwd(), v))) ??
-                    "",
-            )
+            pathToFileURL(
+                resolve(
+                    cwd(),
+                    params.config ??
+                        CONFIG_PATH.find(v => xfs.has(resolve(cwd(), v))) ??
+                        "",
+                ),
+            ).toString()
         );
         result = resolveConfig(config);
     } catch (error) {
