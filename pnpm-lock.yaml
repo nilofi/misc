@@ -381,8 +381,8 @@ importers:
         specifier: ^14
         version: 14.18.63
       '@xenon.js/build':
-        specifier: ^1.0.7
-        version: 1.0.7(@types/node@14.18.63)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.5.4))(prettier@3.3.3)
+        specifier: ^1.0.8
+        version: 1.0.8(@types/node@14.18.63)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.5.4))(prettier@3.3.3)
       '@xenon.js/configs':
         specifier: workspace:^
         version: link:../configs
@@ -1688,12 +1688,12 @@ packages:
   '@vue/shared@3.4.38':
     resolution: {integrity: sha512-q0xCiLkuWWQLzVrecPb0RMsNWyxICOjPrcrwxTUEHb1fsnvni4dcuyG7RT/Ie7VPTvnjzIaWzRMUBsrqNj/hhw==}
 
-  '@xenon.js/build@1.0.7':
-    resolution: {integrity: sha512-1fb6VWqWcajllo3IEV/UYtIQn/ZMS2E6dmVNtAlaWmkJEN2K5P0l3TA1oh+747UVFQ+VpATQkMO6JQCTK4/rqA==}
+  '@xenon.js/build@1.0.8':
+    resolution: {integrity: sha512-T8SFyQy+xVSQs6XuXsqOzRl6evAvrMvwB2daAvSiQ8rP+VLJ7qjnAkuhyjwJI0OrSCTzxJ0W8LN++qY3fllA5w==}
     hasBin: true
 
-  '@xenon.js/misc@1.0.2':
-    resolution: {integrity: sha512-F/27mnqp1ORwqZBTaI0vP81MMU0LGiD87SoC+zgIkSNO/C0uM3yKPHu6I+FsHgCv/H9QMQttBSzzEHAgQidkEA==}
+  '@xenon.js/misc@1.0.3':
+    resolution: {integrity: sha512-qm55Dm/G3NEPJoCA1NYz0PpGu3maQAqLkYoO2ufwyFUVN56+/Jse1uJGbJogmaLLkdpdP+WXygntNBKorlamMQ==}
 
   JSONStream@1.3.5:
     resolution: {integrity: sha512-E+iruNOY8VV9s4JEbe1aNEm6MiszPRr/UfcHMz0TQh1BXSxHK+ASV1R6W4HpjBhSeS+54PIsAMCBmwD06LLsqQ==}
@@ -5815,14 +5815,14 @@ snapshots:
 
   '@vue/shared@3.4.38': {}
 
-  '@xenon.js/build@1.0.7(@types/node@14.18.63)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.5.4))(prettier@3.3.3)':
+  '@xenon.js/build@1.0.8(@types/node@14.18.63)(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.5.4))(prettier@3.3.3)':
     dependencies:
       '@commander-js/extra-typings': 12.1.0(commander@12.1.0)
       '@microsoft/api-extractor': 7.47.6(@types/node@14.18.63)
       '@rollup/plugin-commonjs': 26.0.1(rollup@4.21.0)
       '@rollup/plugin-node-resolve': 15.2.3(rollup@4.21.0)
       '@rollup/plugin-typescript': 11.1.6(rollup@4.21.0)(tslib@2.6.3)(typescript@5.5.4)
-      '@xenon.js/misc': 1.0.2
+      '@xenon.js/misc': 1.0.3
       commander: 12.1.0
       ctix-temp: 2.6.3(prettier-plugin-organize-imports@4.0.0(prettier@3.3.3)(typescript@5.5.4))(prettier@3.3.3)(typescript@5.5.4)
       dependency-cruiser: 16.4.0
@@ -5837,7 +5837,7 @@ snapshots:
       - prettier
       - prettier-plugin-organize-imports
 
-  '@xenon.js/misc@1.0.2':
+  '@xenon.js/misc@1.0.3':
     dependencies:
       comment-json: 4.2.5
 

@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/configs",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "All common configuration related to JavaScript.",
   "keywords": [
     "xenon",

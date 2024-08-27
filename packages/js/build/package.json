@@ -1,6 +1,6 @@
 {
   "name": "@xenon.js/build",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A modern build tool out of the box.",
   "keywords": [
     "xenon",
