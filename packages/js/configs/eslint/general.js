@@ -313,6 +313,7 @@ export function config(config = {}) {
                                       "val",
                                       "reactive",
                                       "shallow",
+                                      "computed",
                                   ]),
                               },
                           ],
