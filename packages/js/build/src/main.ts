@@ -215,7 +215,7 @@ async function executePostBuildAddons(config: Config) {
                     continue;
                 }
                 for (const entry of chunk.entrys) {
-                    await xfs.create(join(output, distDir));
+                    await xfs.createDirectory(join(output, distDir));
                     await generateApiReport({
                         project,
                         file: join(

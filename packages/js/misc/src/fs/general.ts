@@ -1,10 +1,12 @@
 import {
     existsSync as _existsSync,
+    lstatSync as _lstatSync,
+    statSync as _statSync,
     type BigIntStats,
     rmSync,
     type Stats,
 } from "fs";
-import { access, rm } from "fs/promises";
+import { lstat as _lstat, stat as _stat, access, rm } from "fs/promises";
 
 export async function exists(path: string) {
     try {
@@ -36,6 +38,50 @@ export function removeSync(path: string) {
         rmSync(path, { force: true, recursive: true });
     } catch (error) {
         // do nothings.
+    }
+}
+
+export async function stat<B extends boolean = false>(
+    path: string,
+    bigint: B = false as B,
+): Promise<(B extends true ? BigIntStats : Stats) | undefined> {
+    try {
+        return (await _stat(path, { bigint })) as never;
+    } catch (error) {
+        return undefined;
+    }
+}
+
+export function statSync<B extends boolean = false>(
+    path: string,
+    bigint: B = false as B,
+): (B extends true ? BigIntStats : Stats) | undefined {
+    try {
+        return _statSync(path, { bigint }) as never;
+    } catch (error) {
+        return undefined;
+    }
+}
+
+export async function lstat<B extends boolean = false>(
+    path: string,
+    bigint: B = false as B,
+): Promise<(B extends true ? BigIntStats : Stats) | undefined> {
+    try {
+        return (await _lstat(path, { bigint })) as never;
+    } catch (error) {
+        return undefined;
+    }
+}
+
+export function lstatSync<B extends boolean = false>(
+    path: string,
+    bigint: B = false as B,
+): (B extends true ? BigIntStats : Stats) | undefined {
+    try {
+        return _lstatSync(path, { bigint }) as never;
+    } catch (error) {
+        return undefined;
     }
 }
 

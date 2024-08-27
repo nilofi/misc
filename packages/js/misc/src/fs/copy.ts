@@ -36,7 +36,7 @@ import {
 import { basename, dirname, join, parse, resolve } from "path";
 import { cwd, emitWarning } from "process";
 import { isChild } from "../path/path.js";
-import { create, createSync } from "./directory.js";
+import { createDirectory, createDirectorySync } from "./directory.js";
 import { exists, isIdentical } from "./general.js";
 
 export interface CopyOptions {
@@ -105,7 +105,7 @@ export async function copy(
     const destParent = dirname(dest);
     const dirExists = await exists(destParent);
     if (!dirExists) {
-        await create(destParent);
+        await createDirectory(destParent);
     }
 
     await getStatsAndPerformCopy(destStat, src, dest, opts);
@@ -458,7 +458,7 @@ export function copySync(
     checkParentPathsSync(src, srcStat, dest, "copy");
     if (opts.filter && !opts.filter(src, dest)) return;
     const destParent = dirname(dest);
-    if (!existsSync(destParent)) createSync(destParent);
+    if (!existsSync(destParent)) createDirectorySync(destParent);
     getStatsAndPerformCopySync(destStat, src, dest, opts);
 }
 

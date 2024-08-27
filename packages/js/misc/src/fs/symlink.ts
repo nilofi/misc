@@ -7,7 +7,7 @@ import {
 } from "fs";
 import { symlink as _symlink, lstat, stat } from "fs/promises";
 import { dirname, isAbsolute, join, relative } from "path";
-import { create, createSync } from "./directory.js";
+import { createDirectory, createDirectorySync } from "./directory.js";
 import { exists, isIdentical } from "./general.js";
 
 async function symlinkPaths(src: string, dest: string) {
@@ -103,7 +103,7 @@ function symlinkTypeSync(src: string, type?: "dir" | "file" | "junction") {
     }
 }
 
-export async function symlink(
+export async function createSymlink(
     src: string,
     dest: string,
     type?: "dir" | "file" | "junction",
@@ -128,13 +128,13 @@ export async function symlink(
     const dir = dirname(dest);
 
     if (!(await exists(dir))) {
-        await create(dir);
+        await createDirectory(dir);
     }
 
     return _symlink(src, dest, toType);
 }
 
-export function symlinkSync(
+export function createSymlinkSync(
     src: string,
     dest: string,
     type?: "dir" | "file" | "junction",
@@ -159,7 +159,7 @@ export function symlinkSync(
     const dir = dirname(dest);
     const exists = existsSync(dir);
     if (!exists) {
-        createSync(dir);
+        createDirectorySync(dir);
     }
     _symlinkSync(src, dest, type);
 }

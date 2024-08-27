@@ -1,7 +1,7 @@
 import { mkdirSync } from "fs";
 import { mkdir } from "fs/promises";
 
-export async function create(path: string) {
+export async function createDirectory(path: string) {
     try {
         await mkdir(path, { recursive: true });
     } catch (error) {
@@ -9,7 +9,7 @@ export async function create(path: string) {
     }
 }
 
-export function createSync(path: string) {
+export function createDirectorySync(path: string) {
     try {
         mkdirSync(path, { recursive: true });
     } catch (error) {

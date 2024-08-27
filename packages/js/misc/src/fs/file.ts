@@ -1,6 +1,9 @@
 import { readFileSync, writeFileSync } from "fs";
 import { readFile, writeFile } from "fs/promises";
+import { dirname } from "path";
 import * as JSONC from "../jsonc/jsonc.js";
+import { createDirectory, createDirectorySync } from "./directory.js";
+import { exists, existsSync } from "./general.js";
 
 export async function text(path: string, encoding: BufferEncoding = "utf-8") {
     try {
@@ -95,6 +98,12 @@ export async function write(
     encoding: BufferEncoding = "utf-8",
 ) {
     try {
+        const dir = dirname(path);
+
+        if (!(await exists(dir))) {
+            await createDirectory(dir);
+        }
+
         await writeFile(path, content as string, encoding);
     } catch (error) {
         // do nothings.
@@ -107,6 +116,12 @@ export function writeSync(
     encoding: BufferEncoding = "utf-8",
 ) {
     try {
+        const dir = dirname(path);
+
+        if (!existsSync(dir)) {
+            createDirectorySync(dir);
+        }
+
         writeFileSync(path, content as string, encoding);
     } catch (error) {
         // do nothings.
@@ -121,12 +136,8 @@ export async function writeJson(
         space?: number;
     },
 ) {
-    try {
-        const { encoding = "utf-8", space } = options ?? {};
-        await writeFile(path, JSON.stringify(json, undefined, space), encoding);
-    } catch (error) {
-        // do nothings.
-    }
+    const { encoding = "utf-8", space } = options ?? {};
+    await write(path, JSON.stringify(json, undefined, space), encoding);
 }
 
 export function writeJsonSync(
@@ -137,12 +148,8 @@ export function writeJsonSync(
         space?: number;
     },
 ) {
-    try {
-        const { encoding = "utf-8", space } = options ?? {};
-        writeFileSync(path, JSON.stringify(json, undefined, space), encoding);
-    } catch (error) {
-        // do nothings.
-    }
+    const { encoding = "utf-8", space } = options ?? {};
+    writeSync(path, JSON.stringify(json, undefined, space), encoding);
 }
 
 export async function writeJsonc(
@@ -153,16 +160,8 @@ export async function writeJsonc(
         space?: string | number;
     },
 ) {
-    try {
-        const { encoding = "utf-8", space } = options ?? {};
-        await writeFile(
-            path,
-            JSONC.stringify(json, undefined, space),
-            encoding,
-        );
-    } catch (error) {
-        // do nothings.
-    }
+    const { encoding = "utf-8", space } = options ?? {};
+    await write(path, JSONC.stringify(json, undefined, space), encoding);
 }
 
 export function writeJsoncSync(
@@ -173,10 +172,6 @@ export function writeJsoncSync(
         space?: string | number;
     },
 ) {
-    try {
-        const { encoding = "utf-8", space } = options ?? {};
-        writeFileSync(path, JSONC.stringify(json, undefined, space), encoding);
-    } catch (error) {
-        // do nothings.
-    }
+    const { encoding = "utf-8", space } = options ?? {};
+    writeSync(path, JSONC.stringify(json, undefined, space), encoding);
 }

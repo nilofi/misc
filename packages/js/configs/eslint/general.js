@@ -144,6 +144,7 @@ export function config(config = {}) {
                 "@typescript-eslint/class-literal-property-style": "off",
                 "@typescript-eslint/no-unsafe-declaration-merging": "off",
                 "@typescript-eslint/unified-signatures": "off",
+                "@typescript-eslint/prefer-promise-reject-errors": "off",
 
                 // 在推荐规则内，但需允许 (...args: any[]) 用法
                 "@typescript-eslint/no-explicit-any": [
